@@ -182,7 +182,12 @@
             left:0;right:0; /* horizontal center */
         }
 
-        
+
+        #index-screen {
+            z-index: 3; /* integer */
+            background: #E0E0E0;
+            visibility: visible;
+        }
         .game-base {
             visibility: hidden;
         }
@@ -191,14 +196,14 @@
             background: #E0E0E0;
             text-align: center;
         }
-        #index-screen {
-            z-index: 3; /* integer */
-            background: #E0E0E0;
-            visibility: visible;
-        }
         .game-overlay {
-            z-index: 4; /* integer */
+            z-index: 10; /* integer */
             background: rgba(0, 0, 0, 0.5);
+            visibility: hidden;
+        }
+        #scoreboard {
+            z-index: 4; /* integer */
+            background: #E0E0E0;
             visibility: hidden;
         }
 
@@ -244,8 +249,12 @@
             margin: 2.5%;
         }
         #game-grid td {
-            text-align: center; /* need to realign stuff if using a reset css */
-            vertical-align: middle; /* need to realign stuff if using a reset css */
+            /**
+             * http://css-tricks.com/what-is-vertical-align/
+             * need to realign stuff if using a reset css
+             */
+            text-align: center;
+            vertical-align: middle;
             border: 1vh solid #41768D;
             background: #6394A9;
             font-size: 8vmin;
@@ -343,6 +352,7 @@
             margin: 2vmin 10%;
             padding: 3vmin 0;
             background: #285D74;
+            border: 0; /* remove border since all browsers do it different */
             
             /* font-family: 'Roboto', sans-serif; */
             font-family: 'Comic Neue', sans-serif;
@@ -356,6 +366,76 @@
             border-radius: 10px; /* future proofing */
             -khtml-border-radius: 10px; /* for old Konqueror browsers */
         }
+        
+        #scoreboard h1 {
+            width: 100%;
+            text-align: center;
+            font-size: 6vmin;
+            line-height: 7vmin;
+            font-weight: bold;
+            color: #776E65;
+            margin: 3vmin 0;
+            
+            /* font-family: 'Roboto', sans-serif; */
+            font-family: 'Comic Neue', sans-serif;
+            font-feature-settings: "kern";
+            -moz-font-feature-settings: "kern";
+            -webkit-font-feature-settings: "kern";
+        }
+        #scoreboard ol {
+            width: 70%;
+            margin: 0 auto;
+        }
+        #scoreboard li {
+            width: 100%;
+            text-align: left;
+            font-size: 3vmin;
+            line-height: 4vmin;
+            font-weight: normal;
+            color: #285D74;
+            margin: 1vmin 0;
+            
+            /* font-family: 'Roboto', sans-serif; */
+            font-family: 'Comic Neue', sans-serif;
+            font-feature-settings: "kern";
+            -moz-font-feature-settings: "kern";
+            -webkit-font-feature-settings: "kern";
+        }
+        span.push-right {
+            float: right;
+        }
+        #scoreboard button {
+            display: block;
+            width: 80%;
+            text-align: center;
+            font-size: 5vmin;
+            line-height: 6vmin;
+            font-weight: bold;
+            color: #fff;
+            margin: 2vmin 10%;
+            padding: 3vmin 0;
+            background: #285D74;
+            border: 0; /* remove border since all browsers do it different */
+            bottom: 0;
+            
+            /* font-family: 'Roboto', sans-serif; */
+            font-family: 'Comic Neue', sans-serif;
+            font-feature-settings: "kern";
+            -moz-font-feature-settings: "kern";
+            -webkit-font-feature-settings: "kern";
+            
+            /* http://css-tricks.com/snippets/css/rounded-corners/ */
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px; /* future proofing */
+            -khtml-border-radius: 10px; /* for old Konqueror browsers */
+            
+            position: absolute;
+            bottom:0; /* vertical center */
+            left:0;right:0; /* horizontal center */
+        }
+        
+
     </style>
   </head>
   <body>
@@ -387,9 +467,18 @@
     <div id="index-screen" class="game-container">
         <h1 id="title">Nyan Letters</h1>
         <button id="new-game-button">New Game</button>
-        <button id="high-score-button">Highscores</button>
+        <button id="scoreboard-button">Highscores</button>
         <button id="settings-button">Settings</button>
     </div>    
+    <div id="scoreboard" class="game-container">
+        <h1>High Scores</h1>
+        <ol>
+            <!-- Dynamically Generated via appcache -->
+           <li>Mr. Kiwi <span class="push-right">100</span></li>
+           <li>Mr. Yo <span class="push-right">90</span></li>
+        </ol>
+        <button id="homescreen-button">Back</button>
+    </div>  
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -666,6 +755,28 @@
                         'visibility' : 'visible'
                     });
                     startGameTimer();
+                },
+                showScoreBoard: function() {
+                    $('#index-screen').css({
+                        'visibility' : 'hidden'
+                    });
+                    $('div.game-base').css({
+                        'visibility' : 'hidden'
+                    });
+                    $('#scoreboard').css({
+                        'visibility' : 'visible'
+                    });
+                },
+                showHomeScreen: function() {
+                    $('#index-screen').css({
+                        'visibility' : 'visible'
+                    });
+                    $('div.game-base').css({
+                        'visibility' : 'hidden'
+                    });
+                    $('#scoreboard').css({
+                        'visibility' : 'hidden'
+                    });
                 }
             };
         }(); // the parens here cause the anonymous function to execute and return
@@ -679,6 +790,14 @@
         
         $("#new-game-button").click(function(event) {
             nyanGame.initGame();
+        });
+        
+        $("#scoreboard-button").click(function(event) {
+            nyanGame.showScoreBoard();
+        });
+        
+        $("#homescreen-button").click(function(event) {
+            nyanGame.showHomeScreen();
         });
         
         // http://stackoverflow.com/questions/1996747/add-new-value-to-an-existing-array-in-javascript
