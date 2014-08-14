@@ -399,6 +399,7 @@
             -moz-font-feature-settings: "kern";
             -webkit-font-feature-settings: "kern";
         }
+        /* http://css-tricks.com/left-align-and-right-align-text-on-the-same-line/ */
         span.push-right {
             float: right;
         }
@@ -480,6 +481,11 @@
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- for animating background color changes
+         http://stackoverflow.com/questions/190560/jquery-animate-backgroundcolor
+         http://stackoverflow.com/questions/20540807/changing-background-color-using-jquery-animate
+    -->
+    <script type="text/javascript" src="http://code.jquery.com/color/jquery.color-2.1.2.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <!-- <script src="js/bootstrap.min.js"></script>-->
     <script>
@@ -502,10 +508,10 @@
             var selectedCells = [];
             
             // All of these are in seconds.
-            var timeleft = 20;
-            var timetotal = 20;
-            var refresh = 1;
+            var timeleft = 10;
+            var timetotal = 10;
             var bonustime = 5;
+            var penaltytime = -2;
             
             // This is the current progress bar animation timeout.
             var timeout = null;
@@ -540,7 +546,7 @@
                     while (myNode.firstChild) {
                         myNode.removeChild(myNode.firstChild);
                     }
-                }
+                }bonustime
                 
                 var grid = '';
                 for (var i = 0; i < difficulty; i++) {
@@ -571,9 +577,7 @@
             var addLetterSet = function() {
                 console.log('filledCells = ' + filledCells);
                 if (filledCells + setSize > difficulty * difficulty) {
-                    console.log('gameover');
-                    gameover();
-                    return;
+                    return false;
                 }
                 
                 var generated = 0;
@@ -594,6 +598,31 @@
                     }
                 }
                 console.log('filledCells post generating = ' + filledCells);
+                return true;
+            }
+            
+            // Single fill function for use to add extra letters to throw people off.
+            var addRandomLetter = function() {
+                if (filledCells + 1 > difficulty * difficulty) {
+                    return false;
+                }
+                
+                var letter = getRandomInt(65, 90);
+                var generated = 0;
+                while (generated < 1) {
+                    var x, y;
+                    x = getRandomInt(0, difficulty - 1);
+                    y = getRandomInt(0, difficulty - 1);
+                    console.log('(' + x + ', ' + y + ')');
+                    if (!$( '#cell-' + x + '-' + y ).hasClass('active') && !$( '#cell-' + x + '-' + y ).hasClass('selected')) {
+                        console.log("Open cell!");
+                        $( '#cell-' + x + '-' + y ).text(String.fromCharCode(letter + generated));
+                        $( '#cell-' + x + '-' + y ).addClass('active');
+                        generated++;
+                        filledCells++;
+                    }
+                }
+                return true;
             }
 
             // http://stackoverflow.com/questions/3954438/remove-item-from-array-by-value
@@ -650,11 +679,21 @@
             }
             
             // http://api.jquery.com/animate/
-            // Use animate with a callback to the gameover function once the animation finishes.
+            // Use animate with a callback.
+            // In the callback closure, add new letters and reset the timer.
+            // No need to stop since this was the animation that should finished.
             var startGameTimer = function() {
                 var progressBarWidth = timeleft * $('#progressBar').width() / timetotal;
                 $('#progressBar').find('div').animate({ width: progressBarWidth }, 0, 'linear');
-                $('#progressBar').find('div').animate({ width: 0 }, timeleft * 1000, 'linear', gameover);
+                $('#progressBar').find('div').animate({ width: 0 }, timeleft * 1000, 'linear', function(){
+                    if (addLetterSet()) {
+                        updateGameTimer(timetotal);
+                    } else {
+                        console.log('gameover');
+                        stopGameTimer();
+                        gameover();
+                    }
+                });
             }
             
             // http://api.jquery.com/stop/
@@ -678,6 +717,7 @@
                 // In the case the game just started,
                 // timeleft would have been initialized to timetotal.
                 timeleft = Math.min(timeleft, timetotal);
+                console.log("updateTimeLeft, timetotal = " + timetotal + " timeleft = " + timeleft);
             }
             
             var calculatePoints = function(chain) {
@@ -722,17 +762,22 @@
                         if (chain == setSize) {
                             console.log('score!');
                             emptySelectedCells();
+                            addLetterSet();
+                            // original game just reset the timer
+                            // I'm just adding bonus time to make it harder
+                            // updateGameTimer(totaltime);
                             updateGameTimer(bonustime);
                         } else {
                             console.log('noMatch();');
                             unselectSelectedCells();
+                            // original game would doc time when you get it wrong.
+                            // we won't be doing that
+                            // updateGameTimer(penaltytime);
                         }
                         updateScoreBy(calculatePoints(chain));
 
                         console.log('filledCells post clear = ' + filledCells);
                     }
-                    
-                    addLetterSet();
                 },
                 unselectCell: function(cellId) {
                     $('#' + cellId).removeClass('selected');
@@ -746,6 +791,7 @@
                     updateLevelBy(0);
                     createGameGrid();
                     addLetterSet();
+                    addRandomLetter();
                     $('#homescreen').css({
                         'visibility' : 'hidden'
                     });
@@ -782,10 +828,6 @@
         /**
          * All action handlers.
          */
-        $("#progressBar").click(function(event) {
-            nyanGame.addBonusTime();
-        });
-        
         $("#new-game-button").click(function(event) {
             nyanGame.initGame();
         });
