@@ -374,8 +374,9 @@
          */ 
         var nyanGame = function () {
             /**
-            * All global game variables and settings.
-            */
+             * All global game variables and settings.
+             * Everything is kept in this module as to not polute the real global namespace.
+             */
             var difficulty = 5; // game board size (default: 5)
             var filledCells = 0; 
             var setSize = 2; // pairs, triples, etc.
@@ -397,8 +398,8 @@
 
             
             /**
-            * All game functions.
-            */
+             * Private game functions.
+             */
             var resetGameData = function() {
                 filledCells = 0; 
                 selectedCount = 0;
@@ -437,19 +438,19 @@
                 
             // http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
             /**
-            * Returns a random integer between min (inclusive) and max (inclusive)
-            * Using Math.round() will give you a non-uniform distribution!
-            */
+             * Returns a random integer between min (inclusive) and max (inclusive)
+             * Using Math.round() will give you a non-uniform distribution!
+             */
             var getRandomInt = function(min, max) {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             }
 
             /**
-            * http://www.asciitable.com/
-            * http://stackoverflow.com/questions/5462676/converting-ascii-to-text
-            * http://stackoverflow.com/questions/5898656/test-if-an-element-contains-a-class
-            * 
-            */
+             * http://www.asciitable.com/
+             * http://stackoverflow.com/questions/5462676/converting-ascii-to-text
+             * http://stackoverflow.com/questions/5898656/test-if-an-element-contains-a-class
+             * 
+             */
             var addLetterSet = function() {
                 console.log('filledCells = ' + filledCells);
                 if (filledCells + setSize > difficulty * difficulty) {
@@ -591,15 +592,6 @@
              * What's public.
              */
             return  {
-                startTimer: function() {
-                    startGameTimer();
-                },
-                stopTimer: function() {
-                    stopGameTimer();
-                },
-                addBonusTime: function() {
-                    updateGameTimer(bonustime);
-                },
                 selectCell: function(cellId) {
                     $('#' + cellId).removeClass('active');
                     $('#' + cellId).addClass('selected');
@@ -612,7 +604,7 @@
                         if (chain == setSize) {
                             console.log('score!');
                             emptySelectedCells();
-                            this.addBonusTime();
+                            updateGameTimer(bonustime);
                         } else {
                             console.log('noMatch();');
                             unselectSelectedCells();
@@ -636,29 +628,12 @@
                     updateLevelBy(0);
                     createGameGrid();
                     addLetterSet();
-                    this.startTimer();
+                    startGameTimer();
                 }
-                
-                /**
-                 * YUI Module Pattern Example:
-                 *
-                myPublicMethod: function () {
-                    YAHOO.log("I'm accessible as YAHOO.myProject.myModule.myPublicMethod.");
-
-                    //Within myProject, I can access "private" vars and methods:
-                    YAHOO.log(myPrivateVar);
-                    YAHOO.log(myPrivateMethod());
-
-                    //The native scope of myPublicMethod is myProject; we can
-                    //access public members using "this":
-                    YAHOO.log(this.myPublicProperty);
-                }
-                */
             };
-
         }(); // the parens here cause the anonymous function to execute and return
     
-    
+
         nyanGame.initGame();
 
         /**
