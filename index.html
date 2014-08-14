@@ -531,44 +531,35 @@
                 selectedCount = 0;
             }
             
-            var startGameTimer = function($element) {
-                /**
-                 * Old code from the SO post.
-                 * Figured out what I wanted to do from this.
-                 *
-                // console.log("timeleft = " + timeleft);
-                var progressBarWidth = timeleft * $element.width() / timetotal;
-                $element.find('div').animate({ width: progressBarWidth }, timeleft == timetotal ? 0 : refresh * 1000, 'linear');
-                if(timeleft > 0) {
-                    timeleft = Math.min(timeleft - refresh, timetotal);
-                    timeout = setTimeout(function() {
-                        startGameTimer($element);
-                    }, refresh * 1000);
-                } else {
-                    // gameover
-                    console.log("gameover");
-                    // TODO: bug, this fires before the animation finishes
-                    // really gotta figure out this whole timing thing
-                    gameover();
-                    timeout = null;
-                }
-                 *
-                 */
-                var leftover = timetotal * ($element.find('div').width() / $element.width());
-                if (leftover != 0) {
-                    timeleft = leftover + bonustime;
-                }
-                timeleft = Math.min(timeleft, timetotal);
-                var progressBarWidth = timeleft * $element.width() / timetotal;
-                $element.find('div').animate({ width: progressBarWidth }, 0, 'linear');
-                $element.find('div').animate({ width: 0 }, timeleft * 1000, 'linear', gameover);
+            // http://api.jquery.com/animate/
+            // Use animate with a callback to the gameover function once the animation finishes.
+            var startGameTimer = function() {
+                var progressBarWidth = timeleft * $('#progressBar').width() / timetotal;
+                $('#progressBar').find('div').animate({ width: progressBarWidth }, 0, 'linear');
+                $('#progressBar').find('div').animate({ width: 0 }, timeleft * 1000, 'linear', gameover);
             }
             
+            // http://api.jquery.com/stop/
             var stopGameTimer = function() {
-                // TODO: add code to calculate how much time was left when stopping
-                //       and then update timeleft to more accurately reflect this.
-                if (timeout !== null)
-                    clearTimeout(timeout);
+                $('#progressBar').find('div').stop(true, false);
+            }
+            
+            var updateGameTimer = function(additionalTime) {
+                updateTimeLeft(additionalTime);
+                stopGameTimer();
+                startGameTimer();
+            }
+            
+            var updateTimeLeft = function(additionalTime) {
+                var leftover = timetotal * ($('#progressBar').find('div').width() / $('#progressBar').width());
+                // It'll be 0 if the game just started or just ended.
+                if (leftover != 0) {
+                    timeleft = leftover;
+                }
+                timeleft += additionalTime;
+                // In the case the game just started,
+                // timeleft would have been initialized to timetotal.
+                timeleft = Math.min(timeleft, timetotal);
             }
             
             var calculatePoints = function(chain) {
@@ -601,23 +592,13 @@
              */
             return  {
                 startTimer: function() {
-                    startGameTimer($('#progressBar'));
+                    startGameTimer();
                 },
                 stopTimer: function() {
                     stopGameTimer();
                 },
                 addBonusTime: function() {
-                    /* that + refresh lets you get to a full 20 seconds.
-                    * but there is a jerkiness to animating to full width that I can't figure out.
-                    * For now, it's ok, but hopefully I can fix it.
-                    */
-                    /* current implementation has nice smoothness but when resetting to 20,
-                    * it will wait 1 sec before counting down again due to the code design.
-                    * This could end up as a necessary evil for the game.
-                    */
-                    timeleft += bonustime; //Math.min(timeleft + bonustime, timetotal);
-                    $('#progressBar').find('div').stop(true, false);
-                    startGameTimer($('#progressBar'));
+                    updateGameTimer(bonustime);
                 },
                 selectCell: function(cellId) {
                     $('#' + cellId).removeClass('active');
