@@ -12,7 +12,9 @@
 
     <!-- Bootstrap -->
     <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
-    <link href="normalize.css" rel="stylesheet">
+    <!-- <link href="normalize.css" rel="stylesheet"> -->
+    <link href="html5doctor-reset.css" rel="stylesheet">
+    <!-- <link href="meyers-reset.css" rel="stylesheet"> -->
     
     <!-- Comic Neue Fonts: http://comicneue.com/ -->
     <link href="css/font.css" rel="stylesheet">
@@ -182,17 +184,17 @@
 
         
         .game-base {
-            visibility: visible;
+            visibility: hidden;
         }
         .game-component {
             z-index: 2; /* integer */
             background: #E0E0E0;
             text-align: center;
         }
-        .index-screen {
+        #index-screen {
             z-index: 3; /* integer */
-            background: grey;
-            visibility: hidden;
+            background: #E0E0E0;
+            visibility: visible;
         }
         .game-overlay {
             z-index: 4; /* integer */
@@ -200,23 +202,6 @@
             visibility: hidden;
         }
 
-        
-        /**
-         * This would be used if I was doing the score layout with tables.
-        .score-table table {
-            height: calc(100% - 5vmin);
-            width: 100%;
-        }
-        .score-table td {
-            height: 25%;
-            font-size: 8vmin;
-            line-height: 9vmin;
-            font-weight: normal;
-            font-family: 'Roboto', sans-serif;
-            text-align: center;
-        }
-        */
-        
         /**
          * Good enough for a pure CSS3 solution,
          * but better to change it to use javascript
@@ -259,6 +244,8 @@
             margin: 2.5%;
         }
         #game-grid td {
+            text-align: center; /* need to realign stuff if using a reset css */
+            vertical-align: middle; /* need to realign stuff if using a reset css */
             border: 1vh solid #41768D;
             background: #6394A9;
             font-size: 8vmin;
@@ -329,6 +316,46 @@
             height: 3rem;
             background: red;
         }
+        
+        #title {
+            width: 100%;
+            text-align: center;
+            font-size: 9vmin;
+            line-height: 10vmin;
+            font-weight: lighter;
+            color: #776E65;
+            margin: 14vmin 0;
+            
+            /* font-family: 'Roboto', sans-serif; */
+            font-family: 'Comic Neue', sans-serif;
+            font-feature-settings: "kern";
+            -moz-font-feature-settings: "kern";
+            -webkit-font-feature-settings: "kern";
+        }
+        #index-screen button {
+            display: block;
+            width: 80%;
+            text-align: center;
+            font-size: 5vmin;
+            line-height: 6vmin;
+            font-weight: bold;
+            color: #fff;
+            margin: 2vmin 10%;
+            padding: 3vmin 0;
+            background: #285D74;
+            
+            /* font-family: 'Roboto', sans-serif; */
+            font-family: 'Comic Neue', sans-serif;
+            font-feature-settings: "kern";
+            -moz-font-feature-settings: "kern";
+            -webkit-font-feature-settings: "kern";
+            
+            /* http://css-tricks.com/snippets/css/rounded-corners/ */
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px; /* future proofing */
+            -khtml-border-radius: 10px; /* for old Konqueror browsers */
+        }
     </style>
   </head>
   <body>
@@ -357,8 +384,11 @@
             </div>
         </div>
     </div>
-    <div class="game-container index-screen">
-        
+    <div id="index-screen" class="game-container">
+        <h1 id="title">Nyan Letters</h1>
+        <button id="new-game-button">New Game</button>
+        <button id="high-score-button">Highscores</button>
+        <button id="settings-button">Settings</button>
     </div>    
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -583,6 +613,7 @@
             }
             
             var gameover = function() {
+                stopGameTimer();
                 $('#gameover-overlay').css({
                     'visibility' : 'visible'
                 });
@@ -628,19 +659,26 @@
                     updateLevelBy(0);
                     createGameGrid();
                     addLetterSet();
+                    $('#index-screen').css({
+                        'visibility' : 'hidden'
+                    });
+                    $('div.game-base').css({
+                        'visibility' : 'visible'
+                    });
                     startGameTimer();
                 }
             };
         }(); // the parens here cause the anonymous function to execute and return
     
-
-        nyanGame.initGame();
-
         /**
          * All action handlers.
          */
         $("#progressBar").click(function(event) {
             nyanGame.addBonusTime();
+        });
+        
+        $("#new-game-button").click(function(event) {
+            nyanGame.initGame();
         });
         
         // http://stackoverflow.com/questions/1996747/add-new-value-to-an-existing-array-in-javascript
