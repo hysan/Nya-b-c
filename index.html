@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width" />
+    
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="normalize.css" rel="stylesheet">
+    
+    <!-- Comic Neue Fonts: http://comicneue.com/ -->
+    <link href="css/font.css" rel="stylesheet">
+    
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <!--
+        Ok, here are my notes:
+            -----
+            We are cloning Meow Letters!
+                https://github.com/ana-balica/meow_letters
+            -----
+            For the base styling, I'm gonna pick one of these:
+                normalize.css - http://necolas.github.io/normalize.css/
+                bootstrap - http://getbootstrap.com/components/
+                foundation - http://foundation.zurb.com/docs/components/kitchen_sink.html
+            A reset css is also viable, but I really don't feel like styling everything myself.
+            Here is some research pertaining to these choices:
+                http://stackoverflow.com/questions/3485720/which-html5-reset-css-do-you-use-and-why
+                http://stackoverflow.com/questions/6887336/what-is-the-difference-between-normalize-css-and-reset-css
+            -----
+            For sizing the game container to make it look good, I fix it to an aspect ratio and use all vh units.
+            This lets me center the game on the screen and make the game resize nicely.
+            Then I can add a background color to the body element to either have black bars or make it match the game component backgrounds.
+                http://stackoverflow.com/questions/20590239/maintain-aspect-ratio-of-div-but-fill-screen-width-and-height-in-css
+            But of course, this isn't perfect on all devices.
+            It'd probably be best to get the game too fit as close as possible to the device's aspect ratio as possible.
+            We can also account for portrait vs landscape.
+            For this, we can use a combination of css-media queries and some new CSS3 properties:
+                http://css-tricks.com/css-media-queries/
+                http://www.sitepoint.com/media-queries-look-different-media-features/
+                https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries
+            Those above three are all you need to read, but these can also help:
+                http://stackoverflow.com/questions/5725838/difference-between-aspect-ratio-and-device-aspect-ratio-in-css-media-queries
+                http://cssmediaqueries.com/overview.html
+            -----
+            Now we are getting close to making the HTML5 game look good on mobile since we have no vertical scrolling
+            and can adapt to various device aspect ratios.
+            But the app (both online and offline) still show the address bar among other controls.
+            We can use metadata tags to disable these and make it appear to work like a fullscreen app.
+                http://www.bennadel.com/blog/1945-using-the-cache-manifest-with-iphone-s-app-mode-for-native-web-applications.htm
+            For some extra troubleshooting in case that simple solution doesn't work, see these:
+                http://www.html5rocks.com/en/mobile/fullscreen/?redirect_from_locale=es
+                http://stackoverflow.com/questions/6429492/how-do-you-keep-an-iphone-ipad-web-app-in-full-screen-mode
+                http://stackoverflow.com/questions/8336102/using-offline-application-cache-in-ios-and-in-full-screen-app-mode-it-opens-othe
+            -----
+            Ok, so how to we make this work 100% offline?
+            HTML5 application caching with a manifest file.
+                http://www.html5rocks.com/en/tutorials/appcache/beginner/
+                http://www.sitepoint.com/creating-offline-html5-apps-with-appcache/
+                http://sixrevisions.com/web-development/html5-iphone-app/
+            We also want to use webfonts so we can't forget that either:
+                http://stackoverflow.com/questions/7042834/is-it-possible-to-load-webfonts-through-the-offline-storage-cache-manifest
+                http://stackoverflow.com/questions/11753327/how-to-use-google-web-font-in-an-iphone-app-built-with-phonegap
+            Roboto Font is what is used in Meow Letters:
+                http://www.google.com/fonts#UsePlace:use/Collection:Roboto
+                https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
+                http://www.maketecheasier.com/use-google-roboto-font-everywhere/
+            -----
+            Finally, we get into building the actual game and it's various screens and components.
+            To do that, we will need some CSS properties that will make things look nice.
+            Specifically:
+                visibility - use this to hide or reveal entire screens
+                z-index - to separate the screens so that we have no possible rendering collisions
+                    (especially important with position absolute. 
+                        Absolutely positioned elements (our whole game screens) won't effect each others' renderings,
+                        but z-index will let use define which screens go on top of the other.
+                        That way we don't have to use any guesswork based on which chunk of html code came first.)
+                    This also let's use have overlay screens and/or components.
+                background: rgba() - to make overlays have transparent backgrounds to give us that glassy cover feel
+            Useful documentation:
+                http://css-tricks.com/almanac/properties/z/z-index/
+                http://css-tricks.com/rgba-browser-support/
+                    http://stackoverflow.com/questions/5662178/opacity-of-divs-background-without-affecting-contained-element-in-ie-8
+                    http://stackoverflow.com/questions/11807286/how-to-make-div-background-color-transparent-in-css
+                http://css-tricks.com/almanac/properties/v/visibility/
+            Also, the difference between visibility and display:
+                http://learnlayout.com/display.html
+            -----
+            Countdown Progress Bar Timer
+            I largely copied the code from these examples:
+                http://stackoverflow.com/questions/24530908/showing-a-time-countdown-progress-bar
+                http://workshop.rs/2012/12/animated-progress-bar-in-4-lines-of-jquery/
+                http://stackoverflow.com/questions/9651482/countdown-timer-with-progress-bar
+            
+            -----
+            Various notes on javascript.
+            Document.ready vs window.onload vs document.onload:
+                http://stackoverflow.com/questions/3698200/window-onload-vs-document-ready
+                http://stackoverflow.com/questions/588040/window-onload-vs-document-onload
+                https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers.onload
+            Clearing timeouts if I need it:
+                http://www.sitepoint.com/settimeout-example/
+            Faster Math.max and Math.min:
+                http://ejohn.org/blog/fast-javascript-maxmin/
+            -----
+            Styling notes:
+                redefine everything in % or vmin/vmax, like fonts and tables
+                this will allow everything to resize nicely relative to each other and prevents the layout from breaking
+                    http://css-tricks.com/viewport-sized-typography/
+                vertically centering elements
+                    http://www.smashingmagazine.com/2013/08/09/absolute-horizontal-vertical-centering-css/
+                    http://zerosixthree.se/vertical-align-anything-with-just-3-lines-of-css/
+    -->
+    <style>
+        /*
+         * Landscape Formats
+         * 16/9 = 1.778
+         *  width = 100vw, height = 100/1.777778 = 56.24999 = 56.25vw
+         *  (max) height = 100vh, width = 100 * (16/9) = 177.78vh
+         * 3/2 = 1.5
+         *  100vw x 66.6667vw
+         *  (max) 100vh x 150vh
+         * 4/3 = 1.333
+         *  100vw x 75.00vw
+         *  (max) 100vh x 133.333vh
+         *
+         * Portrait Formats (note the vw and vh switching)
+         * 9/16 = 0.5625
+         *  width = 100*0.5625 = 56.25vh, height = 100vh
+         *  (max) height = 100/0.5625 = 177.78vw, width = 100vw
+         * 2/3 = 0.666667
+         *  66.67vh, 100vh
+         *  (max) 150vw, 100vw
+         * 3/4 = 0.75
+         *  75vh, 100vh
+         *  (max) 133.33vw, 100vw
+         */
+        .game-container
+        {
+            width: 66.67vh;
+            height: 100vh;
+            max-height: 150vw;
+            max-width: 100vw;
+            margin: auto;
+            position: absolute;
+            top:0;bottom:0; /* vertical center */
+            left:0;right:0; /* horizontal center */
+        }
+        .game-board {
+            width: 66.67vh;
+            height: 66.67vh;
+            max-height: 100vw;
+            max-width: 100vw;
+            margin: auto;
+            position: absolute;
+            bottom:0; /* anchor to bottom */
+            left:0;right:0; /* horizontal center */
+        }
+        .score-table {
+            width: 66.67vh;
+            height: 33.33vh;
+            max-height: 50vw;
+            max-width: 100vw;
+            margin: auto;
+            position: absolute;
+            top:0; /* anchor to top */
+            left:0;right:0; /* horizontal center */
+        }
+
+        
+        .game-base {
+            visibility: visible;
+        }
+        .game-component {
+            z-index: 2; /* integer */
+            background: #E0E0E0;
+            text-align: center;
+        }
+        .index-screen {
+            z-index: 3; /* integer */
+            background: grey;
+            visibility: hidden;
+        }
+        .game-overlay {
+            z-index: 4; /* integer */
+            background: rgba(0, 0, 0, 0.5);
+            visibility: hidden;
+        }
+
+        
+        /**
+         * This would be used if I was doing the score layout with tables.
+        .score-table table {
+            height: calc(100% - 5vmin);
+            width: 100%;
+        }
+        .score-table td {
+            height: 25%;
+            font-size: 8vmin;
+            line-height: 9vmin;
+            font-weight: normal;
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+        }
+        */
+        
+        /**
+         * Good enough for a pure CSS3 solution,
+         * but better to change it to use javascript
+         * and set the width of h1 and h2 based on 
+         * a percent of the parent div's height.
+         * And update it on resizing.
+         * For now this is fine because the sum total of
+         * all the vmins (progress bar, h1, h2) don't 
+         * exceed the min vh for this section of the game.
+         */
+        .score-table h1 {
+            font-size: 12vmin;
+            line-height: 13vmin;
+            font-weight: normal;
+            color: #285D74;
+            margin: 0;
+            
+            /* font-family: 'Roboto', sans-serif; */
+            font-family: 'Comic Neue', sans-serif;
+            font-feature-settings: "kern";
+            -moz-font-feature-settings: "kern";
+            -webkit-font-feature-settings: "kern";
+        }
+        .score-table h2 {
+            font-size: 11vmin;
+            line-height: 12vmin;
+            font-weight: lighter;
+            color: #918A83;
+            margin: 0;
+            
+            /* font-family: 'Roboto', sans-serif; */
+            font-family: 'Comic Neue', sans-serif;
+            font-feature-settings: "kern";
+            -moz-font-feature-settings: "kern";
+            -webkit-font-feature-settings: "kern";
+        }
+        #game-grid {
+            height: 95%;
+            width: 95%;
+            margin: 2.5%;
+        }
+        #game-grid td {
+            border: 1vh solid #41768D;
+            background: #6394A9;
+            font-size: 8vmin;
+            line-height: 9vmin;
+            font-weight: bold;
+            width: 19%; /* 95/5 = 19 */
+            height: 19%;
+            color: #B8913D;
+            
+            /* font-family: 'Roboto', sans-serif; */
+            font-family: 'Comic Neue', sans-serif;
+            font-feature-settings: "kern";
+            -moz-font-feature-settings: "kern";
+            -webkit-font-feature-settings: "kern";
+        }
+        #game-grid td.active {
+            background: #E7C783;
+        }
+        #game-grid td.selected {
+            background: #FFFFFF;
+        }
+        .progress-bar {
+            background: #E79676;
+            height: 5vmin;
+            width: 100%;
+        }
+        .vertical-center {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        
+        #progressBar {
+          width: 100%;
+          /*margin: 10px auto;*/
+          height: 5vmin;
+          background-color: rgb(239, 239, 239); /* #E0E0E0; original game used the same color */
+        }
+
+        #progressBar div {
+          height: 100%;
+          text-align: right;
+          /*padding: 0 10px;*/
+          line-height: 5vmin; /* same as #progressBar height if we want text middle aligned */
+          width: 0;
+          background-color: #E79676;
+          box-sizing: border-box;
+          max-width: 100%;
+        }
+        
+        #gameover {
+            background: #FAF8EF;
+            height: 95%;
+            width: 95%;
+            margin: 2.5%;
+        }
+        
+        #gameover h1 {
+
+            margin: 0;
+            
+
+        }
+
+        #test {
+            width: 3rem;
+            height: 3rem;
+            background: red;
+        }
+    </style>
+  </head>
+  <body>
+    <!--<div id="test"></div>-->
+
+    <div id="game-screen" class="game-container game-base">
+        <div class="score-table game-component">
+            <div id="progressBar">
+                <div></div>
+            </div>
+            <div class="vertical-center">
+                <h1 id="level">Level 1</h1>
+                <h2 id="score">Score 15</h2>
+            </div>
+        </div>
+        <div class="game-board game-component">
+            <table id="game-grid">
+                <!-- filled in dynamically -->
+            </table>
+        </div>
+    </div>
+    <div id="gameover-overlay" class="game-container game-overlay">
+        <div class="game-board game-component">
+            <div id="gameover">
+                <h1>GAMEOVER!</h1>
+            </div>
+        </div>
+    </div>
+    <div class="game-container index-screen">
+        
+    </div>    
+    
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <!-- <script src="js/bootstrap.min.js"></script>-->
+    <script>
+        /**
+         * I'm using the YUI Module Pattern to keep my code clean.
+         * http://www.yuiblog.com/blog/2007/06/12/module-pattern/
+         * http://stackoverflow.com/questions/2613310/ive-heard-global-variables-are-bad-what-alternative-solution-should-i-use
+         * http://stackoverflow.com/questions/1841916/how-to-avoid-global-variables-in-javascript
+         */ 
+        var nyanGame = function () {
+            /**
+            * All global game variables and settings.
+            */
+            var difficulty = 5; // game board size (default: 5)
+            var filledCells = 0; 
+            var setSize = 2; // pairs, triples, etc.
+            var selectedCount = 0;
+            // http://stackoverflow.com/questions/11500492/what-are-the-best-practices-to-follow-when-declaring-an-array-in-javascript#11500550
+            var selectedCells = [];
+            
+            // All of these are in seconds.
+            var timeleft = 20;
+            var timetotal = 20;
+            var refresh = 1;
+            var bonustime = 5;
+            
+            // This is the current progress bar animation timeout.
+            var timeout = null;
+            
+            var currentLevel = 1;
+            var currentScore = 0;
+
+            
+            /**
+            * All game functions.
+            */
+            var resetGameData = function() {
+                filledCells = 0; 
+                selectedCount = 0;
+                emptyAnArray(selectedCells);
+                timeleft = timetotal;
+                stopGameTimer()
+                currentLevel = 1;
+                currentScore = 0;
+                
+                $('#gameover-overlay').css({
+                    'visibility' : 'hidden'
+                });
+            }
+            
+            // difficulty: is the grid dimensions. obviously bigger grids are harder.
+            var createGameGrid = function() {
+                // first clear the table of previous setups
+                // http://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
+                var myNode = document.getElementById('game-grid');
+                if (myNode !== null) {
+                    while (myNode.firstChild) {
+                        myNode.removeChild(myNode.firstChild);
+                    }
+                }
+                
+                var grid = '';
+                for (var i = 0; i < difficulty; i++) {
+                    grid += '<tr>';
+                    for (var j = 0; j < difficulty; j++) {
+                        grid += '<td id="cell-' + i + '-' + j + '"></td>';
+                    }
+                    grid += '</tr>';
+                }
+                $('#game-grid').append($(grid));
+            }
+                
+            // http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
+            /**
+            * Returns a random integer between min (inclusive) and max (inclusive)
+            * Using Math.round() will give you a non-uniform distribution!
+            */
+            var getRandomInt = function(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            /**
+            * http://www.asciitable.com/
+            * http://stackoverflow.com/questions/5462676/converting-ascii-to-text
+            * http://stackoverflow.com/questions/5898656/test-if-an-element-contains-a-class
+            * 
+            */
+            var addLetterSet = function() {
+                console.log('filledCells = ' + filledCells);
+                if (filledCells + setSize > difficulty * difficulty) {
+                    console.log('gameover');
+                    gameover();
+                    return;
+                }
+                
+                var generated = 0;
+                // 90 == Z so the last letter we should pick is 1 less than the set size
+                var letter = getRandomInt(65, 90 - (setSize - 1));
+                
+                while (generated < setSize) {
+                    var x, y;
+                    x = getRandomInt(0, difficulty - 1);
+                    y = getRandomInt(0, difficulty - 1);
+                    console.log('(' + x + ', ' + y + ')');
+                    if (!$( '#cell-' + x + '-' + y ).hasClass('active') && !$( '#cell-' + x + '-' + y ).hasClass('selected')) {
+                        console.log("Open cell!");
+                        $( '#cell-' + x + '-' + y ).text(String.fromCharCode(letter + generated));
+                        $( '#cell-' + x + '-' + y ).addClass('active');
+                        generated++;
+                        filledCells++;
+                    }
+                }
+                console.log('filledCells post generating = ' + filledCells);
+            }
+
+            // http://stackoverflow.com/questions/3954438/remove-item-from-array-by-value
+            var removeFromArray = function(arr) {
+                var what, a = arguments, L = a.length, ax;
+                while (L > 1 && arr.length) {
+                    what = a[--L];
+                    while ((ax= arr.indexOf(what)) !== -1) {
+                        arr.splice(ax, 1);
+                    }
+                }
+                return arr;
+            }
+            
+            var currentChainLength = function() {
+                // http://stackoverflow.com/questions/94037/convert-character-to-ascii-code-in-javascript
+                // http://stackoverflow.com/questions/3010840/loop-through-array-in-javascript
+                // http://stackoverflow.com/questions/183161/best-way-to-break-from-nested-loops-in-javascript
+                // http://stackoverflow.com/questions/1564818/how-to-break-2-loops-in-javascript
+                var chain = 0;
+                for (chain; chain < selectedCells.length - 1; chain++) {
+                    console.log($( '#' + selectedCells[chain] ).text().charCodeAt(0));
+                    if ($( '#' + selectedCells[chain+1] ).text().charCodeAt(0) - $( '#' + selectedCells[chain] ).text().charCodeAt(0) != 1) {
+                        return chain + 1; // break is the cheesy way to get out of the loop
+                    }
+                }
+                return chain + 1; // add 1 before returning because of how we check the set
+            }
+            
+            var emptyAnArray = function(arrayToEmpty) {
+                // http://stackoverflow.com/questions/1232040/how-to-empty-an-array-in-javascript
+                while(arrayToEmpty.length > 0) {
+                    arrayToEmpty.pop();
+                }
+            }
+            
+            var emptySelectedCells = function() {
+                for (var i = 0; i < selectedCells.length; i++) {
+                    $( '#' + selectedCells[i] ).text('');
+                    $( '#' + selectedCells[i] ).removeClass('selected');
+                }
+                filledCells -= selectedCount;
+                emptyAnArray(selectedCells);
+                selectedCount = 0;
+            }
+            
+            var unselectSelectedCells = function() {
+                for (var i = 0; i < selectedCells.length; i++) {
+                    $( '#' + selectedCells[i] ).removeClass('selected');
+                    $( '#' + selectedCells[i] ).addClass('active');
+                }
+                emptyAnArray(selectedCells);
+                selectedCount = 0;
+            }
+            
+            var startGameTimer = function($element) {
+                /**
+                 * Old code from the SO post.
+                 * Figured out what I wanted to do from this.
+                 *
+                // console.log("timeleft = " + timeleft);
+                var progressBarWidth = timeleft * $element.width() / timetotal;
+                $element.find('div').animate({ width: progressBarWidth }, timeleft == timetotal ? 0 : refresh * 1000, 'linear');
+                if(timeleft > 0) {
+                    timeleft = Math.min(timeleft - refresh, timetotal);
+                    timeout = setTimeout(function() {
+                        startGameTimer($element);
+                    }, refresh * 1000);
+                } else {
+                    // gameover
+                    console.log("gameover");
+                    // TODO: bug, this fires before the animation finishes
+                    // really gotta figure out this whole timing thing
+                    gameover();
+                    timeout = null;
+                }
+                 *
+                 */
+                var leftover = timetotal * ($element.find('div').width() / $element.width());
+                if (leftover != 0) {
+                    timeleft = leftover + bonustime;
+                }
+                timeleft = Math.min(timeleft, timetotal);
+                var progressBarWidth = timeleft * $element.width() / timetotal;
+                $element.find('div').animate({ width: progressBarWidth }, 0, 'linear');
+                $element.find('div').animate({ width: 0 }, timeleft * 1000, 'linear', gameover);
+            }
+            
+            var stopGameTimer = function() {
+                // TODO: add code to calculate how much time was left when stopping
+                //       and then update timeleft to more accurately reflect this.
+                if (timeout !== null)
+                    clearTimeout(timeout);
+            }
+            
+            var calculatePoints = function(chain) {
+                // TODO: how much score to add
+                var points = 0;
+                if (chain == setSize) {
+                    return chain * chain;
+                }
+                return chain;
+            }
+            
+            var updateScoreBy = function(points) {
+                currentScore += points;
+                $('#score').text('Score ' + currentScore);
+            }
+            
+            var updateLevelBy = function(levels) {
+                currentLevel += levels;
+                $('#level').text('Level ' + currentLevel);
+            }
+            
+            var gameover = function() {
+                $('#gameover-overlay').css({
+                    'visibility' : 'visible'
+                });
+            }
+            
+            /**
+             * What's public.
+             */
+            return  {
+                startTimer: function() {
+                    startGameTimer($('#progressBar'));
+                },
+                stopTimer: function() {
+                    stopGameTimer();
+                },
+                addBonusTime: function() {
+                    /* that + refresh lets you get to a full 20 seconds.
+                    * but there is a jerkiness to animating to full width that I can't figure out.
+                    * For now, it's ok, but hopefully I can fix it.
+                    */
+                    /* current implementation has nice smoothness but when resetting to 20,
+                    * it will wait 1 sec before counting down again due to the code design.
+                    * This could end up as a necessary evil for the game.
+                    */
+                    timeleft += bonustime; //Math.min(timeleft + bonustime, timetotal);
+                    $('#progressBar').find('div').stop(true, false);
+                    startGameTimer($('#progressBar'));
+                },
+                selectCell: function(cellId) {
+                    $('#' + cellId).removeClass('active');
+                    $('#' + cellId).addClass('selected');
+                    selectedCells.push(cellId);
+                    selectedCount++;
+                    if (selectedCount == setSize) {
+                        var chain = currentChainLength();
+                        console.log('chain = ' + chain);
+                        
+                        if (chain == setSize) {
+                            console.log('score!');
+                            emptySelectedCells();
+                            this.addBonusTime();
+                        } else {
+                            console.log('noMatch();');
+                            unselectSelectedCells();
+                        }
+                        updateScoreBy(calculatePoints(chain));
+
+                        console.log('filledCells post clear = ' + filledCells);
+                    }
+                    
+                    addLetterSet();
+                },
+                unselectCell: function(cellId) {
+                    $('#' + cellId).removeClass('selected');
+                    $('#' + cellId).addClass('active');
+                    removeFromArray(selectedCells, cellId);
+                    selectedCount--;
+                },
+                initGame: function() {
+                    resetGameData();
+                    updateScoreBy(0);
+                    updateLevelBy(0);
+                    createGameGrid();
+                    addLetterSet();
+                    this.startTimer();
+                }
+                
+                /**
+                 * YUI Module Pattern Example:
+                 *
+                myPublicMethod: function () {
+                    YAHOO.log("I'm accessible as YAHOO.myProject.myModule.myPublicMethod.");
+
+                    //Within myProject, I can access "private" vars and methods:
+                    YAHOO.log(myPrivateVar);
+                    YAHOO.log(myPrivateMethod());
+
+                    //The native scope of myPublicMethod is myProject; we can
+                    //access public members using "this":
+                    YAHOO.log(this.myPublicProperty);
+                }
+                */
+            };
+
+        }(); // the parens here cause the anonymous function to execute and return
+    
+    
+        nyanGame.initGame();
+
+        /**
+         * All action handlers.
+         */
+        $("#progressBar").click(function(event) {
+            nyanGame.addBonusTime();
+        });
+        
+        // http://stackoverflow.com/questions/1996747/add-new-value-to-an-existing-array-in-javascript
+        $(document.body).on('click', "td[id^='cell-'][class='active']" ,function() {
+            nyanGame.selectCell($(this).attr('id'));
+        });
+        
+        $(document.body).on('click', "td[id^='cell-'][class='selected']" ,function() {
+            nyanGame.unselectCell($(this).attr('id'));
+        });
+        
+        
+        
+/*
+Getting viewport units supported everywhere:
+http://stackoverflow.com/questions/13948713/is-there-any-cross-browser-javascript-for-making-vh-and-vw-units-work
+http://stackoverflow.com/questions/3236511/set-font-size-in-jquery
+http://html5please.com/#fallback
+http://caniuse.com/#feat=viewport-units
+http://caniuse.com/viewport-units
+http://forums.udacity.com/questions/100140926/vw-vh-vmin-vmax-are-not-well-supported-on-mobile-browsers
+https://developer.mozilla.org/en-US/docs/Mozilla/Mobile/Viewport_meta_tag?redirectlocale=en-US&redirectslug=Mobile%2FViewport_meta_tag
+
+        var fontSize = 10;
+        $("#test").click(function(event) {
+            fontSize += 6;
+            jQuery('html').css({
+                'font-size' : fontSize + 'px'
+            });
+        });
+function viewport() {
+    var e = window, a = 'inner';
+    if (!('innerWidth' in window )) {
+        a = 'client';
+        e = document.documentElement || document.body;
+    }
+    return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
+}
+jQuery(window).resize(function(){
+    var vw = (viewport().width/100);
+    jQuery('html').css({
+        'font-size' : vw + 'px'
+    });
+});
+*/
+    </script>
+  </body>
+</html>
