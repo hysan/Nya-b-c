@@ -182,23 +182,21 @@
             left:0;right:0; /* horizontal center */
         }
 
-
-        #index-screen {
+        /**
+         * All of the z-index layers should be different.
+         * Overlay as a class should be the highest as it
+         * is the only layer where you want to see both it
+         * and the screen below it.
+         */
+        #homescreen {
             z-index: 3; /* integer */
             background: #E0E0E0;
             visibility: visible;
         }
-        .game-base {
-            visibility: hidden;
-        }
-        .game-component {
+        #gamescreen {
             z-index: 2; /* integer */
             background: #E0E0E0;
-            text-align: center;
-        }
-        .game-overlay {
-            z-index: 10; /* integer */
-            background: rgba(0, 0, 0, 0.5);
+
             visibility: hidden;
         }
         #scoreboard {
@@ -206,6 +204,12 @@
             background: #E0E0E0;
             visibility: hidden;
         }
+        .game-overlay {
+            z-index: 10; /* integer */
+            background: rgba(0, 0, 0, 0.5);
+            visibility: hidden;
+        }
+
 
         /**
          * Good enough for a pure CSS3 solution,
@@ -217,18 +221,20 @@
          * all the vmins (progress bar, h1, h2) don't 
          * exceed the min vh for this section of the game.
          */
+        .score-table {
+            text-align: center;
+            /* font-family: 'Roboto', sans-serif; */
+            font-family: 'Comic Neue', sans-serif;
+            font-feature-settings: "kern";
+            -moz-font-feature-settings: "kern";
+            -webkit-font-feature-settings: "kern";
+        }
         .score-table h1 {
             font-size: 12vmin;
             line-height: 13vmin;
             font-weight: normal;
             color: #285D74;
             margin: 0;
-            
-            /* font-family: 'Roboto', sans-serif; */
-            font-family: 'Comic Neue', sans-serif;
-            font-feature-settings: "kern";
-            -moz-font-feature-settings: "kern";
-            -webkit-font-feature-settings: "kern";
         }
         .score-table h2 {
             font-size: 11vmin;
@@ -236,12 +242,6 @@
             font-weight: lighter;
             color: #918A83;
             margin: 0;
-            
-            /* font-family: 'Roboto', sans-serif; */
-            font-family: 'Comic Neue', sans-serif;
-            font-feature-settings: "kern";
-            -moz-font-feature-settings: "kern";
-            -webkit-font-feature-settings: "kern";
         }
         #game-grid {
             height: 95%;
@@ -314,10 +314,8 @@
         }
         
         #gameover h1 {
-
+            text-align: center;
             margin: 0;
-            
-
         }
 
         #test {
@@ -341,7 +339,7 @@
             -moz-font-feature-settings: "kern";
             -webkit-font-feature-settings: "kern";
         }
-        #index-screen button {
+        #homescreen button {
             display: block;
             width: 80%;
             text-align: center;
@@ -441,8 +439,8 @@
   <body>
     <!--<div id="test"></div>-->
 
-    <div id="game-screen" class="game-container game-base">
-        <div class="score-table game-component">
+    <div id="gamescreen" class="game-container">
+        <div class="score-table">
             <div id="progressBar">
                 <div></div>
             </div>
@@ -451,20 +449,20 @@
                 <h2 id="score">Score 15</h2>
             </div>
         </div>
-        <div class="game-board game-component">
+        <div class="game-board">
             <table id="game-grid">
                 <!-- filled in dynamically -->
             </table>
         </div>
     </div>
     <div id="gameover-overlay" class="game-container game-overlay">
-        <div class="game-board game-component">
+        <div class="game-board">
             <div id="gameover">
                 <h1>GAMEOVER!</h1>
             </div>
         </div>
     </div>
-    <div id="index-screen" class="game-container">
+    <div id="homescreen" class="game-container">
         <h1 id="title">Nyan Letters</h1>
         <button id="new-game-button">New Game</button>
         <button id="scoreboard-button">Highscores</button>
@@ -748,19 +746,19 @@
                     updateLevelBy(0);
                     createGameGrid();
                     addLetterSet();
-                    $('#index-screen').css({
+                    $('#homescreen').css({
                         'visibility' : 'hidden'
                     });
-                    $('div.game-base').css({
+                    $('#gamescreen').css({
                         'visibility' : 'visible'
                     });
                     startGameTimer();
                 },
                 showScoreBoard: function() {
-                    $('#index-screen').css({
+                    $('#homescreen').css({
                         'visibility' : 'hidden'
                     });
-                    $('div.game-base').css({
+                    $('#gamescreen').css({
                         'visibility' : 'hidden'
                     });
                     $('#scoreboard').css({
@@ -768,10 +766,10 @@
                     });
                 },
                 showHomeScreen: function() {
-                    $('#index-screen').css({
+                    $('#homescreen').css({
                         'visibility' : 'visible'
                     });
-                    $('div.game-base').css({
+                    $('#gamescreen').css({
                         'visibility' : 'hidden'
                     });
                     $('#scoreboard').css({
