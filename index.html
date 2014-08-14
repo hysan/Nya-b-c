@@ -312,16 +312,46 @@
             width: 95%;
             margin: 2.5%;
         }
-        
         #gameover h1 {
             text-align: center;
             margin: 0;
+            color: #285D74;
+            font-size: 9vmin;
+            line-height: 10vmin;
+            font-weight: bold;
+            
+            /* font-family: 'Roboto', sans-serif; */
+            font-family: 'Comic Neue', sans-serif;
+            font-feature-settings: "kern";
+            -moz-font-feature-settings: "kern";
+            -webkit-font-feature-settings: "kern";
+            
+            position: absolute;
+            top: calc(50% - 10vmin); /* 10vmin is the height taken by the button and its bottom margin */
+            left:0;right:0; /* horizontal center */
         }
-
-        #test {
-            width: 3rem;
-            height: 3rem;
-            background: red;
+        #gameover button {
+            display: block;
+            width: 90%;
+            text-align: center;
+            font-size: 4vmin;
+            line-height: 5vmin;
+            font-weight: bold;
+            color: #fff;
+            margin: 1vmin 5%;
+            padding: 2vmin 0;
+            background: #285D74;
+            border: 0; /* remove border since all browsers do it different */
+            
+            /* font-family: 'Roboto', sans-serif; */
+            font-family: 'Comic Neue', sans-serif;
+            font-feature-settings: "kern";
+            -moz-font-feature-settings: "kern";
+            -webkit-font-feature-settings: "kern";
+            
+            position: absolute;
+            bottom:2.5%; /* vertical center */
+            left:0;right:0; /* horizontal center */
         }
         
         #title {
@@ -415,7 +445,6 @@
             padding: 3vmin 0;
             background: #285D74;
             border: 0; /* remove border since all browsers do it different */
-            bottom: 0;
             
             /* font-family: 'Roboto', sans-serif; */
             font-family: 'Comic Neue', sans-serif;
@@ -435,6 +464,11 @@
         }
         
 
+        #test {
+            width: 3rem;
+            height: 3rem;
+            background: red;
+        }
     </style>
   </head>
   <body>
@@ -460,6 +494,7 @@
         <div class="game-board">
             <div id="gameover">
                 <h1>GAMEOVER!</h1>
+                <button id="restart-button">Restart</button>
             </div>
         </div>
     </div>
@@ -838,6 +873,10 @@
         
         $("#homescreen-button").click(function(event) {
             nyanGame.showHomeScreen();
+        });
+        
+        $("#restart-button").click(function(event) {
+            nyanGame.initGame();
         });
         
         // http://stackoverflow.com/questions/1996747/add-new-value-to-an-existing-array-in-javascript
