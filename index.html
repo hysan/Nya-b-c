@@ -10,16 +10,11 @@
     
     <title>~ Nyan Letters ~</title>
 
-    <!-- Bootstrap -->
-    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
-    <!-- <link href="normalize.css" rel="stylesheet"> -->
     <link href="html5doctor-reset.css" rel="stylesheet">
-    <!-- <link href="meyers-reset.css" rel="stylesheet"> -->
-    
     <!-- Comic Neue Fonts: http://comicneue.com/ -->
     <link href="css/font.css" rel="stylesheet">
-    
-    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+    <!--<link href="viewport-styles.css" rel="stylesheet">-->
+    <link href="rem-styles.css" rel="stylesheet">
     
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -28,9 +23,6 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <!--<link href="viewport-styles.css" rel="stylesheet">-->
-    <link href="rem-styles.css" rel="stylesheet">
-    
     <!--
         Ok, here are my notes:
             -----
@@ -177,16 +169,22 @@
         <button id="homescreen-button">Back</button>
     </div>  
     
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- jQuery for animations and I just like using it over straight javascript -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <!-- for animating background color changes
          http://stackoverflow.com/questions/190560/jquery-animate-backgroundcolor
          http://stackoverflow.com/questions/20540807/changing-background-color-using-jquery-animate
     -->
     <script type="text/javascript" src="http://code.jquery.com/color/jquery.color-2.1.2.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <!-- <script src="js/bootstrap.min.js"></script>-->
-    <script>
+    <!-- Use fastclick.js to get rid of as much of the 300ms delay as possible
+         that is applied by default on mobile devices for clicking.
+         This will make the game seem much more responsive and smooth.
+         http://updates.html5rocks.com/2013/12/300ms-tap-delay-gone-away
+         https://github.com/ftlabs/fastclick
+    -->
+    <script type='application/javascript' src='fastclick.js'></script>
+    
+    <script>       
         /**
          * I'm using the YUI Module Pattern to keep my code clean.
          * http://www.yuiblog.com/blog/2007/06/12/module-pattern/
@@ -551,52 +549,49 @@
             nyanGame.unselectCell($(this).attr('id'));
         });
         
-        
-        
-/*
-Getting viewport units supported everywhere:
-http://stackoverflow.com/questions/13948713/is-there-any-cross-browser-javascript-for-making-vh-and-vw-units-work
-http://stackoverflow.com/questions/3236511/set-font-size-in-jquery
-http://html5please.com/#fallback
-http://caniuse.com/#feat=viewport-units
-http://caniuse.com/viewport-units
-http://forums.udacity.com/questions/100140926/vw-vh-vmin-vmax-are-not-well-supported-on-mobile-browsers
-https://developer.mozilla.org/en-US/docs/Mozilla/Mobile/Viewport_meta_tag?redirectlocale=en-US&redirectslug=Mobile%2FViewport_meta_tag
-*/
-        var fontSize = 10;
-        $("#test").click(function(event) {
-            fontSize += 6;
+
+        /*
+        Getting viewport units supported everywhere:
+        http://stackoverflow.com/questions/13948713/is-there-any-cross-browser-javascript-for-making-vh-and-vw-units-work
+        http://stackoverflow.com/questions/3236511/set-font-size-in-jquery
+        http://html5please.com/#fallback
+        http://caniuse.com/#feat=viewport-units
+        http://caniuse.com/viewport-units
+        http://forums.udacity.com/questions/100140926/vw-vh-vmin-vmax-are-not-well-supported-on-mobile-browsers
+        https://developer.mozilla.org/en-US/docs/Mozilla/Mobile/Viewport_meta_tag?redirectlocale=en-US&redirectslug=Mobile%2FViewport_meta_tag
+        */
+        function viewport() {
+            var e = window, a = 'inner';
+            if (!('innerWidth' in window )) {
+                a = 'client';
+                e = document.documentElement || document.body;
+            }
+            return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
+        }
+        jQuery(window).resize(function(){
+            var vh = (viewport().height/100);
+            var vw = (viewport().width/100);
+            
+            console.log('vw = ' + (viewport().width/100));
+            console.log('vh = ' + (viewport().height/100));
+            console.log('vmin = ' + Math.min((viewport().height/100), (viewport().width/100)));
+            console.log('width = '+ viewport().width);
+            console.log('estimated game width = ' + vh * 66.67);
+            //currently fixed to a 3:2 aspect ratio
+            // TODO: change this based on media queries.
+            var vcalc = Math.min(vh, viewport().width/66.67);
             jQuery('html').css({
-                'font-size' : fontSize + 'px'
+                'font-size' : vcalc + 'px'
             });
         });
-function viewport() {
-    var e = window, a = 'inner';
-    if (!('innerWidth' in window )) {
-        a = 'client';
-        e = document.documentElement || document.body;
-    }
-    return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
-}
-jQuery(window).resize(function(){
-    var vh = (viewport().height/100);
-    var vw = (viewport().width/100);
-    
-    console.log('vw = ' + (viewport().width/100));
-    console.log('vh = ' + (viewport().height/100));
-    console.log('vmin = ' + Math.min((viewport().height/100), (viewport().width/100)));
-    console.log('width = '+ viewport().width);
-    console.log('estimated game width = ' + vh * 66.67);
-    //currently fixed to a 3:2 aspect ratio
-    // TODO: change this based on media queries.
-    var vcalc = Math.min(vh, viewport().width/66.67);
-    jQuery('html').css({
-        'font-size' : vcalc + 'px'
-    });
-});
 
-$(window).resize();
+        /* Do an initial resize to get the viewport to rem to pixel units set. */
+        $(window).resize();
 
+        /* This enables fastclick.js */
+        window.addEventListener('load', function() {
+            FastClick.attach(document.body);
+        }, false);
     </script>
   </body>
 </html>
