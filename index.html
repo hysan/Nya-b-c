@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- http://stackoverflow.com/questions/4472891/how-can-i-disable-zoom-on-a-mobile-web-page -->
+    <!-- This disables zooming. Something we don't want to do on mobile devices.
+         http://stackoverflow.com/questions/4472891/how-can-i-disable-zoom-on-a-mobile-web-page
+    -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -597,6 +599,12 @@
         window.addEventListener('load', function() {
             FastClick.attach(document.body);
         }, false);
+        
+        /**
+         * Disable scrolling on touch devices since we size the game to fit without needing to scroll.
+         * http://stackoverflow.com/questions/4770025/how-to-disable-scrolling-temporarily
+         */
+        $('body').bind('touchmove', function(e){e.preventDefault()})
     </script>
   </body>
 </html>
