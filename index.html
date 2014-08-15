@@ -131,8 +131,6 @@
     -->
   </head>
   <body>
-    <div id="test"></div>
-
     <div id="gamescreen" class="game-container">
         <div class="score-table">
             <div id="progressBar">
@@ -167,8 +165,16 @@
         <h1>High Scores</h1>
         <ol>
             <!-- Dynamically Generated via appcache -->
-           <li>Mr. Kiwi <span class="push-right">100</span></li>
-           <li>Mr. Yo <span class="push-right">90</span></li>
+           <li>Mr. Kiwi <span class="push-right">1040</span></li>
+           <li>Mr. Yo <span class="push-right">904</span></li>
+           <li>Mr. Zo <span class="push-right">790</span></li>
+           <li>Mrs. Yo <span class="push-right">490</span></li>
+           <li>Mrs. Zo <span class="push-right">390</span></li>
+           <li>Mrs. Go <span class="push-right">290</span></li>
+           <li>Mr. Ho <span class="push-right">190</span></li>
+           <li>Mrs. Lo <span class="push-right">90</span></li>
+           <li>Mr. YoLo <span class="push-right">45</span></li>
+           <li>Mrs. YoWo <span class="push-right">1</span></li>
         </ol>
         <button id="homescreen-button">Back</button>
     </div>  
@@ -576,16 +582,22 @@ function viewport() {
 }
 jQuery(window).resize(function(){
     var vh = (viewport().height/100);
+    var vw = (viewport().width/100);
+    
     console.log('vw = ' + (viewport().width/100));
     console.log('vh = ' + (viewport().height/100));
     console.log('vmin = ' + Math.min((viewport().height/100), (viewport().width/100)));
+    console.log('width = '+ viewport().width);
+    console.log('estimated game width = ' + vh * 66.67);
+    //currently fixed to a 3:2 aspect ratio
+    // TODO: change this based on media queries.
+    var vcalc = Math.min(vh, viewport().width/66.67);
     jQuery('html').css({
-        'font-size' : vh + 'px'
+        'font-size' : vcalc + 'px'
     });
-
 });
 
-
+$(window).resize();
 
     </script>
   </body>

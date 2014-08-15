@@ -37,7 +37,6 @@ html {
 #gamescreen {
     z-index: 2; /* integer */
     background: #E0E0E0;
-
     visibility: hidden;
 }
 #scoreboard {
@@ -218,10 +217,6 @@ span.push-right {
 }
 
 
-
-
-
-
 /*
     * Landscape Formats
     * 16/9 = 1.778
@@ -247,31 +242,24 @@ span.push-right {
     */
 .game-container
 {
-    width: 66.67vh;
-    height: 100vh;
-    max-height: 150vw;
-    max-width: 100vw;
+    width: 66.67rem;
+    height: 100rem;
 }
 .game-board {
-    width: 66.67vh;
-    height: 66.67vh;
-    max-height: 100vw;
-    max-width: 100vw;
+    width: 66.67rem;
+    height: 66.67rem;
 }
 .score-table {
-    width: 66.67vh;
-    height: 33.33vh;
-    max-height: 50vw;
-    max-width: 100vw;
+    width: 66.67rem;
+    height: 33.33rem;
 }
-
 .score-table h1 {
-    font-size: 12vmin;
-    line-height: 13vmin;
+    font-size: 10rem;
+    line-height: 11rem;
 }
 .score-table h2 {
-    font-size: 11vmin;
-    line-height: 12vmin;
+    font-size: 7rem;
+    line-height: 8rem;
 }
 #game-grid {
     height: 95%;
@@ -279,9 +267,9 @@ span.push-right {
     margin: 2.5%;
 }
 #game-grid td {
-    font-size: 8vmin;
-    line-height: 9vmin;
-    border: 1vh solid #41768D;
+    font-size: 8rem;
+    line-height: 9rem;
+    border: 1rem solid #41768D;
     width: 19%; /* 95/5 = 19 */
     height: 19%;
 }
@@ -290,68 +278,60 @@ span.push-right {
     top: 50%;
     transform: translateY(-50%);
 }
-
-
 #progressBar {
     width: 100%;
-    /*margin: 10px auto;*/
-    height: 5vmin;
+    height: 4rem;
     background-color: rgb(239, 239, 239); /* #E0E0E0; original game used the same color */
 }
-
 #progressBar div {
     height: 100%;
     text-align: right;
-    /*padding: 0 10px;*/
-    line-height: 5vmin; /* same as #progressBar height if we want text middle aligned */
+    line-height: 4rem; /* same as #progressBar height if we want text middle aligned */
     width: 0;
     background-color: #E79676;
     box-sizing: border-box;
     max-width: 100%;
 }
-
-
-
 #gameover {
     height: 95%;
     width: 95%;
     margin: 2.5%;
 }
 #gameover h1 {
-    font-size: 9vmin;
-    line-height: 10vmin;
+    font-size: 9rem;
+    line-height: 10rem;
     position: absolute;
-    top: calc(50% - 10vmin); /* 10vmin is the height taken by the button and its bottom margin */
+    top: calc(50% - 10rem); /* 10vmin is the height taken by the button and its bottom margin */
     left:0;right:0; /* horizontal center */
 }
 #gameover button {
     width: 90%;
-    font-size: 4vmin;
-    line-height: 5vmin;
-    margin: 1vmin 5%;
-    padding: 2vmin 0;
+    font-size: 4rem;
+    line-height: 5rem;
+    margin: 1rem 5%;
+    padding: 2rem 0;
     position: absolute;
     bottom:2.5%; /* vertical center */
     left:0;right:0; /* horizontal center */
 }
 #title {
     width: 100%;
-    font-size: 9vmin;
-    line-height: 10vmin;
-    margin: 14vmin 0;
+    font-size: 9rem;
+    line-height: 10rem;
+    margin: 14rem 0;
 }
 #homescreen button {
     width: 80%;
-    font-size: 5vmin;
-    line-height: 6vmin;
-    margin: 2vmin 10%;
-    padding: 3vmin 0;
+    font-size: 5rem;
+    line-height: 5.5rem;
+    margin: 2rem 10%;
+    padding: 3rem 0;
 }
 #scoreboard h1 {
     width: 100%;
-    font-size: 6vmin;
-    line-height: 7vmin;
-    margin: 3vmin 0;
+    font-size: 6.5rem;
+    line-height: 7rem;
+    margin: 5rem 0;
 }
 #scoreboard ol {
     width: 70%;
@@ -359,26 +339,14 @@ span.push-right {
 }
 #scoreboard li {
     width: 100%;
-    font-size: 3vmin;
-    line-height: 4vmin;
-    margin: 1vmin 0;
+    font-size: 5rem;
+    line-height: 5.5rem;
+    margin: 1rem 0;
 }
 #scoreboard button {
     width: 80%;
-    font-size: 5vmin;
-    line-height: 6vmin;
-    margin: 2vmin 10%;
-    padding: 3vmin 0;
+    font-size: 4rem;
+    line-height: 4.5rem;
+    margin: 1.5rem 10%;
+    padding: 2rem 0;
 }
-
-    
-#test {
-    width: 66.67rem;
-    height: 100rem;
-    background: red;
-    margin: auto;
-    position: absolute;
-    top:0;bottom:0; /* vertical center */
-    left:0;right:0; /* horizontal center */
-}
-
