@@ -96,6 +96,13 @@ html {
     font-feature-settings: "kern";
     -moz-font-feature-settings: "kern";
     -webkit-font-feature-settings: "kern";
+    
+    /**
+     * iOS Safari has a bug where DOM elements added dynamically don't register click events.
+     * http://stackoverflow.com/questions/14795944/jquery-click-events-not-working-in-ios
+     * This is one possible workaround (though it gives an ugly blink animation on clicking).
+     */
+    cursor: pointer;
 }
 #game-grid td.active {
     background: #E7C783;
