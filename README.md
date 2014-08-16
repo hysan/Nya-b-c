@@ -44,4 +44,5 @@ vim www/config.xml
 # ./platforms/android/cordova/build --release
 # This will place the release APK here:
 # platforms/android/ant-build/NyanLetters-release-unsigned.apk
+# Note: You need to manually sign the release APK or else it can't be installed.
 ```
