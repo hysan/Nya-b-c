@@ -1,8 +1,15 @@
 html {
     font-size: 12px;
     /*background: #E0E0E0;*/
+    /**
+     * This extends the scroll prevention to the unused html container as well.
+     * http://stackoverflow.com/questions/8488447/iphone-web-app-stop-body-scrolling
+     * Note: You need both this css and the javascript code to capture and 
+     * and nullify scrolling events for scrolling to be disabled in all scenarios.
+     */
+    overflow: auto; 
+    -webkit-overflow-scrolling: touch;    
 }
-
 
 .game-container
 {

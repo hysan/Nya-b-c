@@ -603,8 +603,12 @@
         /**
          * Disable scrolling on touch devices since we size the game to fit without needing to scroll.
          * http://stackoverflow.com/questions/4770025/how-to-disable-scrolling-temporarily
+         * http://stackoverflow.com/questions/8488447/iphone-web-app-stop-body-scrolling
+         * Note: You need both this javascript and some css to stop scrolling in all scenarios.
          */
-        $('body').bind('touchmove', function(e){e.preventDefault()})
+        document.ontouchmove = function(event){
+            event.preventDefault();
+        }
     </script>
   </body>
 </html>
