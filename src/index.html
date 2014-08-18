@@ -164,17 +164,7 @@
     <div id="scoreboard" class="game-container">
         <h1>High Scores</h1>
         <ol>
-            <!-- Dynamically Generated via appcache -->
-           <li>Mr. Kiwi <span class="push-right">1040</span></li>
-           <li>Mr. Yo <span class="push-right">904</span></li>
-           <li>Mr. Zo <span class="push-right">790</span></li>
-           <li>Mrs. Yo <span class="push-right">490</span></li>
-           <li>Mrs. Zo <span class="push-right">390</span></li>
-           <li>Mrs. Go <span class="push-right">290</span></li>
-           <li>Mr. Ho <span class="push-right">190</span></li>
-           <li>Mrs. Lo <span class="push-right">90</span></li>
-           <li>Mr. YoLo <span class="push-right">45</span></li>
-           <li>Mrs. YoWo <span class="push-right">1</span></li>
+            <!-- filled in dynamically -->
         </ol>
         <button id="homescreen-button">Back</button>
     </div>
@@ -228,10 +218,70 @@
             var currentLevel = 1;
             var currentScore = 0;
 
-            
+            // Game Save Data
+            /**
+             * Setting this will prevent collisions if I have multiple games on 
+             * the same domain. The current domain can be checked using:
+             *     document.domain
+             * https://developer.mozilla.org/en-US/docs/Web/API/document.domain
+             * http://stackoverflow.com/questions/9742395/scope-of-sessionstorage-and-localstorage
+             */
+            var gameDomain = (document.domain == null || document.domain == '' ? 'file' : document.domain) + '.nyan-letters.';
+            var canSave = false;
+            // These are all set to their defaults initially.
+            var username = 'Doraemon';
+            var EASY = 'EASY'; var NORMAL = 'NORMAL'; var HARD = 'HARD'; // possible game modes (static vars)
+            var gameMode = EASY;
+            var topTen = [
+                {'username': 'A', 'score': '100'},
+                {'username': 'B', 'score': '90'},
+                {'username': 'C', 'score': '80'},
+                {'username': 'D', 'score': '70'},
+                {'username': 'E', 'score': '60'},
+                {'username': 'F', 'score': '50'},
+                {'username': 'G', 'score': '40'},
+                {'username': 'H', 'score': '30'},
+                {'username': 'I', 'score': '20'},
+                {'username': 'J', 'score': '10'}
+            ]
+
             /**
              * Private game functions.
              */
+             
+            /**
+             * Use Web Storage (aka: Local Storage or DOM Storage)
+             * because it has the most browser support and the 
+             * cons don't hurt us since our use of data is so simple.
+             * http://www.html5rocks.com/en/tutorials/offline/whats-offline/
+             * http://www.html5rocks.com/en/tutorials/offline/storage/
+             * http://stackoverflow.com/questions/6849798/html5-client-storage-websqldatabase-vs-webstorage-vs-indexed-database
+             * http://csimms.botonomy.com/2011/05/html5-storage-wars-localstorage-vs-indexeddb-vs-web-sql.html
+             * http://www.html5rocks.com/en/features/storage
+             * http://diveintohtml5.info/storage.html
+             */
+            var supports_html5_storage = function() {
+                try {
+                    return 'localStorage' in window && window['localStorage'] !== null;
+                } catch (e) {
+                    return false;
+                }
+            }
+            
+            // There is a 5MB limit, so just in case...
+            // http://stackoverflow.com/questions/7667958/clear-localstorage
+            var resetSaveData = function() {
+                localStorage.clear();
+            }
+            
+            var printGameData = function() {
+                console.log('username = ' + username);
+                console.log('gameMode = ' + gameMode);
+                for (var i = 0; i < 10; i++) {
+                    console.log((i + 1) + '. ' + topTen[i].username + ' ~~~ ' + topTen[i].score);
+                }
+            }
+            
             var resetGameData = function() {
                 filledCells = 0; 
                 selectedCount = 0;
@@ -255,7 +305,7 @@
                     while (myNode.firstChild) {
                         myNode.removeChild(myNode.firstChild);
                     }
-                }bonustime
+                }
                 
                 var grid = '';
                 for (var i = 0; i < difficulty; i++) {
@@ -509,6 +559,35 @@
                     });
                     startGameTimer();
                 },
+                loadSaveData: function() {
+                    canSave = supports_html5_storage();
+                    if (canSave) {
+                        console.log('Local Storage is supported. Attempting to retrieve data...');
+                        username = localStorage[gameDomain + 'username'] ? localStorage[gameDomain + 'username'] : username;
+                        gameMode = localStorage[gameDomain + 'gameMode'] ? localStorage[gameDomain + 'gameMode'] : gameMode;
+                        for (var i = 0; i < 10; i++) {
+                            topTen[i].username = localStorage[gameDomain + 'username.' + i] ? localStorage[gameDomain + 'username.' + i] : topTen[i].username;
+                            topTen[i].score = localStorage[gameDomain + 'score.' + i] ? localStorage[gameDomain + 'score.' + i] : topTen[i].score;
+                        }
+                        console.log('Data loaded and/or defaults set:');
+                    } else {
+                        console.log('No Local Storage support. No game data will be saved.');
+                        console.log('Defaults are being used:');
+                    }
+                    printGameData();
+                },
+                saveData: function() {
+                    // EVERYTHING in localStorage must be a string,
+                    // so cheat and add '' to everything to coerce everything
+                    // into a string.
+                    // http://stackoverflow.com/questions/869773/what-is-the-fastest-and-safest-way-to-convert-any-type-variable-to-string-in-jav
+                    localStorage[gameDomain + 'username'] = username + '';
+                    localStorage[gameDomain + 'gameMode'] = gameMode + '';
+                    for (var i = 0; i < 10; i++) {
+                        localStorage[gameDomain + 'username.' + i] = topTen[i].username + '';
+                        localStorage[gameDomain + 'score.' + i] = topTen[i].score + '';
+                    }
+                },
                 showScoreBoard: function() {
                     $('#homescreen').css({
                         'visibility' : 'hidden'
@@ -615,6 +694,8 @@
         document.ontouchmove = function(event){
             event.preventDefault();
         }
+        
+        nyanGame.loadSaveData();
     </script>
   </body>
 </html>
