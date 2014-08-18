@@ -188,6 +188,7 @@
     <!-- for animating background color changes
          http://stackoverflow.com/questions/190560/jquery-animate-backgroundcolor
          http://stackoverflow.com/questions/20540807/changing-background-color-using-jquery-animate
+         https://github.com/jquery/jquery-color
     -->
     <script type="text/javascript" src="js/jquery.color.js"></script>
     <!-- Use fastclick.js to get rid of as much of the 300ms delay as possible
@@ -789,9 +790,6 @@
             });
         });
 
-        /* Do an initial resize to get the viewport to rem to pixel units set. */
-        $(window).resize();
-
         /* This enables fastclick.js */
         window.addEventListener('load', function() {
             FastClick.attach(document.body);
@@ -807,7 +805,11 @@
             event.preventDefault();
         }
         
-        //nyanGame.loadSaveData();
+        $(document).ready(function() {
+            /* Do an initial resize to get the viewport to rem to pixel units set. */
+            $(window).resize();
+            //nyanGame.loadSaveData();
+        });
     </script>
   </body>
 </html>
