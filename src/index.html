@@ -163,7 +163,7 @@
     <!-- Scoreboard Screen -->
     <div id="scoreboard" class="game-container">
         <h1>High Scores</h1>
-        <ol>
+        <ol id="scorelist">
             <!-- filled in dynamically -->
         </ol>
         <button class="control-button homescreen-button">Close</button>
@@ -295,7 +295,6 @@
             
             // http://stackoverflow.com/questions/979256/sorting-an-array-of-javascript-objects
             var sort_by = function(field, reverse, primer) {
-
                 var key = primer ? 
                     function(x) {return primer(x[field])} : 
                     function(x) {return x[field]};
@@ -320,17 +319,21 @@
                     'visibility' : 'hidden'
                 });
             }
-            
-            // difficulty: is the grid dimensions. obviously bigger grids are harder.
-            var createGameGrid = function() {
-                // first clear the table of previous setups
-                // http://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
-                var myNode = document.getElementById('game-grid');
+
+            // first clear the table of previous setups
+            // http://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
+            var clearChildElements = function(elementId) {
+                var myNode = document.getElementById(elementId);
                 if (myNode !== null) {
                     while (myNode.firstChild) {
                         myNode.removeChild(myNode.firstChild);
                     }
                 }
+            }
+            
+            // difficulty: is the grid dimensions. obviously bigger grids are harder.
+            var createGameGrid = function() {
+                clearChildElements('game-grid');
                 
                 var grid = '';
                 for (var i = 0; i < difficulty; i++) {
@@ -608,13 +611,21 @@
                     // http://stackoverflow.com/questions/869773/what-is-the-fastest-and-safest-way-to-convert-any-type-variable-to-string-in-jav
                     localStorage[gameDomain + 'username'] = username + '';
                     localStorage[gameDomain + 'gameMode'] = gameMode + '';
-                    topTen.sort(sort_by('score', true, parseInt));
+                    topTen.sort(sort_by('score', false, parseInt));
                     for (var i = 0; i < 10; i++) {
                         localStorage[gameDomain + 'username.' + i] = topTen[i].username + '';
                         localStorage[gameDomain + 'score.' + i] = topTen[i].score + '';
                     }
                 },
                 showScoreBoard: function() {
+                    topTen.sort(sort_by('score', false, parseInt));
+                    clearChildElements('scorelist');
+                    var scorelist = '';
+                    for (var i = 0; i < 10; i++) {
+                        scorelist += ('<li>' + topTen[i].username + ' <span class="push-right">' + topTen[i].score + '</span></li>');
+                    }
+                    $('#scorelist').append($(scorelist));
+                
                     $('#homescreen').css({
                         'visibility' : 'hidden'
                     });
@@ -688,6 +699,7 @@
                     }
                     console.log('username set to ' + username);
                     console.log('gameMode set to ' + gameMode);
+                    // this.saveData();
                 }
             };
         }(); // the parens here cause the anonymous function to execute and return
