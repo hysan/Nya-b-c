@@ -643,6 +643,7 @@
                     });
                 },
                 showSettingsScreen: function() {
+                    $('#save-settings-button').text('Save');
                     $('input[name="username"]').val(username);
                     $('#easy-setting').removeClass('selected');
                     $('#normal-setting').removeClass('selected');
@@ -671,6 +672,22 @@
                     $('#settings').css({
                         'visibility' : 'visible'
                     });
+                },
+                saveSettings: function() {
+                    console.log('Saving settings...');
+                    username = $('input[name="username"]').val();
+                    var selectedDifficulty = $('#settings').find('button.selected').attr("id");
+                    if (selectedDifficulty == 'easy-setting') {
+                        gameMode = EASY;
+                    } else if (selectedDifficulty == 'normal-setting') {
+                        gameMode = NORMAL;
+                    } else if (selectedDifficulty == 'hard-setting') {
+                        gameMode = HARD;
+                    } else {
+                        console.error('ERROR: Something wrong with the ids on the settings screen.');
+                    }
+                    console.log('username set to ' + username);
+                    console.log('gameMode set to ' + gameMode);
                 }
             };
         }(); // the parens here cause the anonymous function to execute and return
@@ -692,6 +709,23 @@
         
         $("#settings-button").click(function(event) {
             nyanGame.showSettingsScreen();
+        });
+        
+        $("button.difficulty-button").click(function(event) {
+            $('#easy-setting').removeClass('selected');
+            $('#normal-setting').removeClass('selected');
+            $('#hard-setting').removeClass('selected');
+            $(this).addClass('selected');
+        });
+        
+        $("#save-settings-button").click(function(event) {
+            $(this).text('Saving...');
+            nyanGame.saveSettings();
+            $(this).animate({
+                backgroundColor: "#C0C0C0"
+            }, 500 ).animate({
+                backgroundColor: "#38814F"
+            }, 500 ).text('Saved!');
         });
         
         $("#restart-button").click(function(event) {
