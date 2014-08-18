@@ -166,11 +166,22 @@
         <ol>
             <!-- filled in dynamically -->
         </ol>
-        <button id="homescreen-button">Back</button>
+        <button class="control-button homescreen-button">Close</button>
     </div>
     <!-- Settings Screen -->
     <div id="settings" class="game-container">
-    
+        <h1>Game Settings</h1>
+        <label for="username">Name:</label>
+        <!-- Randomly capping length at 26.
+             No reason other than, I need to cap it at something.
+        -->
+        <input type="text" name="username" maxlength="26" />
+        <label>Difficulty:</label>
+        <button id="easy-setting" class="difficulty-button selected">EASY</button>
+        <button id="normal-setting" class="difficulty-button">NORMAL</button>
+        <button id="hard-setting" class="difficulty-button">HARD</button>
+        <button id="save-settings-button" class="control-button">Save</button>
+        <button class="control-button homescreen-button">Close</button>
     </div>
     <!-- jQuery for animations and I just like using it over straight javascript -->
     <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -279,6 +290,20 @@
                 console.log('gameMode = ' + gameMode);
                 for (var i = 0; i < 10; i++) {
                     console.log((i + 1) + '. ' + topTen[i].username + ' ~~~ ' + topTen[i].score);
+                }
+            }
+            
+            // http://stackoverflow.com/questions/979256/sorting-an-array-of-javascript-objects
+            var sort_by = function(field, reverse, primer) {
+
+                var key = primer ? 
+                    function(x) {return primer(x[field])} : 
+                    function(x) {return x[field]};
+
+                reverse = [-1, 1][+!!reverse];
+
+                return function (a, b) {
+                    return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
                 }
             }
             
@@ -583,6 +608,7 @@
                     // http://stackoverflow.com/questions/869773/what-is-the-fastest-and-safest-way-to-convert-any-type-variable-to-string-in-jav
                     localStorage[gameDomain + 'username'] = username + '';
                     localStorage[gameDomain + 'gameMode'] = gameMode + '';
+                    topTen.sort(sort_by('score', true, parseInt));
                     for (var i = 0; i < 10; i++) {
                         localStorage[gameDomain + 'username.' + i] = topTen[i].username + '';
                         localStorage[gameDomain + 'score.' + i] = topTen[i].score + '';
@@ -598,6 +624,9 @@
                     $('#scoreboard').css({
                         'visibility' : 'visible'
                     });
+                    $('#settings').css({
+                        'visibility' : 'hidden'
+                    });
                 },
                 showHomeScreen: function() {
                     $('#homescreen').css({
@@ -608,6 +637,39 @@
                     });
                     $('#scoreboard').css({
                         'visibility' : 'hidden'
+                    });
+                    $('#settings').css({
+                        'visibility' : 'hidden'
+                    });
+                },
+                showSettingsScreen: function() {
+                    $('input[name="username"]').val(username);
+                    $('#easy-setting').removeClass('selected');
+                    $('#normal-setting').removeClass('selected');
+                    $('#hard-setting').removeClass('selected');
+                    if (gameMode == EASY) {
+                        $('#easy-setting').addClass('selected');
+                    } else if (gameMode == NORMAL) {
+                        $('#normal-setting').addClass('selected');
+                    } else if (gameMode == HARD) {
+                        $('#hard-setting').addClass('selected');
+                    } else {
+                        console.log('Something is wrong with the difficulty settings.');
+                        gameMode = EASY;
+                        $('#easy-setting').addClass('selected');
+                    }
+                    
+                    $('#homescreen').css({
+                        'visibility' : 'hidden'
+                    });
+                    $('#gamescreen').css({
+                        'visibility' : 'hidden'
+                    });
+                    $('#scoreboard').css({
+                        'visibility' : 'hidden'
+                    });
+                    $('#settings').css({
+                        'visibility' : 'visible'
                     });
                 }
             };
@@ -624,8 +686,12 @@
             nyanGame.showScoreBoard();
         });
         
-        $("#homescreen-button").click(function(event) {
+        $("button.homescreen-button").click(function(event) {
             nyanGame.showHomeScreen();
+        });
+        
+        $("#settings-button").click(function(event) {
+            nyanGame.showSettingsScreen();
         });
         
         $("#restart-button").click(function(event) {
@@ -660,7 +726,7 @@
             }
             return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
         }
-        jQuery(window).resize(function(){
+        jQuery(window).resize(function(){        
             var vh = (viewport().height/100);
             var vw = (viewport().width/100);
             
@@ -695,7 +761,7 @@
             event.preventDefault();
         }
         
-        nyanGame.loadSaveData();
+        //nyanGame.loadSaveData();
     </script>
   </body>
 </html>
