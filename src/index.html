@@ -149,7 +149,13 @@
         <div class="game-board">
             <div id="gameover">
                 <h1>GAMEOVER!</h1>
-                <button id="restart-button">Restart</button>
+                <!-- Randomly capping length at 26.
+                     No reason other than, I need to cap it at something.
+                -->
+                <input type="text" name="username" maxlength="26" />
+                <button id="submit-score-button" class="control-button">Save Score</button>
+                <button id="restart-button" class="control-button">Play Again</button>
+                <button class="control-button homescreen-button">Close</button>
             </div>
         </div>
     </div>
@@ -529,6 +535,7 @@
             
             var gameover = function() {
                 stopGameTimer();
+                $('#gameover > input[name="username"]').val(username);
                 $('#gameover-overlay').css({
                     'visibility' : 'visible'
                 });
@@ -585,6 +592,9 @@
                     });
                     $('#gamescreen').css({
                         'visibility' : 'visible'
+                    });
+                    $('#gameover-overlay').css({
+                        'visibility' : 'hidden'
                     });
                     startGameTimer();
                 },
@@ -653,10 +663,13 @@
                     $('#settings').css({
                         'visibility' : 'hidden'
                     });
+                    $('#gameover-overlay').css({
+                        'visibility' : 'hidden'
+                    });
                 },
                 showSettingsScreen: function() {
                     $('#save-settings-button').text('Save');
-                    $('input[name="username"]').val(username);
+                    $('#settings > input[name="username"]').val(username);
                     $('#easy-setting').removeClass('selected');
                     $('#normal-setting').removeClass('selected');
                     $('#hard-setting').removeClass('selected');
@@ -687,7 +700,7 @@
                 },
                 saveSettings: function() {
                     console.log('Saving settings...');
-                    username = $('input[name="username"]').val();
+                    username = $('#settings > input[name="username"]').val();
                     var selectedDifficulty = $('#settings').find('button.selected').attr("id");
                     if (selectedDifficulty == 'easy-setting') {
                         gameMode = EASY;
@@ -700,7 +713,14 @@
                     }
                     console.log('username set to ' + username);
                     console.log('gameMode set to ' + gameMode);
-                    // this.saveData();
+                },
+                saveScore: function() {
+                    username = $('#gameover > input[name="username"]').val();
+                    console.log('saving score: | ' + username + ' | ' + currentScore + ' |');
+                    topTen.push({
+                        'username': username,
+                        'score': currentScore
+                    });
                 }
             };
         }(); // the parens here cause the anonymous function to execute and return
@@ -734,6 +754,7 @@
         $("#save-settings-button").click(function(event) {
             $(this).text('Saving...');
             nyanGame.saveSettings();
+            nyanGame.saveData();
             $(this).animate({
                 backgroundColor: "#C0C0C0"
             }, 500 ).animate({
@@ -743,6 +764,11 @@
         
         $("#restart-button").click(function(event) {
             nyanGame.initGame();
+        });
+        
+        $("#submit-score-button").click(function(event) {
+            nyanGame.saveScore();
+            nyanGame.saveData();
         });
         
         // http://stackoverflow.com/questions/1996747/add-new-value-to-an-existing-array-in-javascript
