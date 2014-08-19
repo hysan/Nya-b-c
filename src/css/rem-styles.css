@@ -60,7 +60,7 @@ html {
 .game-overlay {
     z-index: 10; /* integer */
     background: rgba(0, 0, 0, 0.5); /* Transparent Black Overlay */
-    visibility: hidden;
+    visibility: visible;
 }
 #settings {
     z-index: 5; /* integer */
@@ -372,6 +372,13 @@ button.difficulty-button.selected {
     background: #38814F;
     position: absolute;
     top: 27.5rem;
+    left:0;right:0; /* horizontal center */
+}
+#gameover h2 {
+    font-size: 7rem;
+    line-height: 8rem;
+    position: absolute;
+    top: 23.75rem;
     left:0;right:0; /* horizontal center */
 }
 #title {

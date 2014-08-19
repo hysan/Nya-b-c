@@ -154,6 +154,7 @@
                 -->
                 <input type="text" name="username" maxlength="26" />
                 <button id="submit-score-button" class="control-button">Save Score</button>
+                <h2>Saved!</h2>
                 <button id="restart-button" class="control-button">Play Again</button>
                 <button class="control-button homescreen-button">Close</button>
             </div>
@@ -536,6 +537,8 @@
             var gameover = function() {
                 stopGameTimer();
                 $('#gameover > input[name="username"]').val(username);
+                //$('#submit-score-button').fadeIn(0);
+                //$('#gameover > input[name="username"]').fadeIn(0);
                 $('#gameover-overlay').css({
                     'visibility' : 'visible'
                 });
@@ -769,6 +772,8 @@
         $("#submit-score-button").click(function(event) {
             nyanGame.saveScore();
             nyanGame.saveData();
+            $('#submit-score-button').fadeOut(1000);
+            $('#gameover > input[name="username"]').fadeOut(1000);
         });
         
         // http://stackoverflow.com/questions/1996747/add-new-value-to-an-existing-array-in-javascript
@@ -834,7 +839,7 @@
         $(document).ready(function() {
             /* Do an initial resize to get the viewport to rem to pixel units set. */
             $(window).resize();
-            //nyanGame.loadSaveData();
+            nyanGame.loadSaveData();
         });
     </script>
   </body>
