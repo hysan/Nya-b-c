@@ -1,6 +1,6 @@
 html {
     font-size: 12px;
-    /*background: #E0E0E0;*/
+    background: #000; /* simulate black bar background for non-conforming aspect ratios. */
     /**
      * This extends the scroll prevention to the unused html container as well.
      * http://stackoverflow.com/questions/8488447/iphone-web-app-stop-body-scrolling
@@ -60,7 +60,7 @@ html {
 .game-overlay {
     z-index: 10; /* integer */
     background: rgba(0, 0, 0, 0.5); /* Transparent Black Overlay */
-    visibility: visible;
+    visibility: hidden;
 }
 #settings {
     z-index: 5; /* integer */
@@ -122,17 +122,21 @@ html {
 #gameover {
     background: #FAF8EF;
 }
-#gameover h1 {
+#gameover h1, #gameover h2 {
     text-align: center;
     margin: 0;
-    color: #285D74;
     font-weight: bold;
-    
     /* font-family: 'Roboto', sans-serif; */
     font-family: 'Comic Neue', sans-serif;
     font-feature-settings: "kern";
     -moz-font-feature-settings: "kern";
     -webkit-font-feature-settings: "kern";
+}
+#gameover h1 {
+    color: #285D74;
+}
+#gameover h2 {
+    color: #38814F;
 }
 #title {
     text-align: center;
@@ -368,7 +372,7 @@ button.difficulty-button.selected {
     border-radius: 5px; /* future proofing */
     -khtml-border-radius: 5px; /* for old Konqueror browsers */
 }
-#submit-score-button {
+#submit-score-button, #gameover button.dummy-saving-button {
     background: #38814F;
     position: absolute;
     top: 27.5rem;

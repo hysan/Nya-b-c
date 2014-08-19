@@ -154,6 +154,7 @@
                 -->
                 <input type="text" name="username" maxlength="26" />
                 <button id="submit-score-button" class="control-button">Save Score</button>
+                <button class="control-button dummy-saving-button">Saving...</button>
                 <h2>Saved!</h2>
                 <button id="restart-button" class="control-button">Play Again</button>
                 <button class="control-button homescreen-button">Close</button>
@@ -537,8 +538,12 @@
             var gameover = function() {
                 stopGameTimer();
                 $('#gameover > input[name="username"]').val(username);
-                //$('#submit-score-button').fadeIn(0);
-                //$('#gameover > input[name="username"]').fadeIn(0);
+                $('#submit-score-button').css({
+                    'visibility' : 'visible'
+                });
+                $('#gameover > input[name="username"]').fadeIn(0);
+                $('#gameover > h2').fadeOut(0);
+                $('#gameover > button.dummy-saving-button').fadeOut(0);
                 $('#gameover-overlay').css({
                     'visibility' : 'visible'
                 });
@@ -770,10 +775,17 @@
         });
         
         $("#submit-score-button").click(function(event) {
+            console.log("testing");
+            $('#submit-score-button').css({
+                'visibility' : 'hidden'
+            });
+            $('#gameover > button.dummy-saving-button').fadeIn(0);
             nyanGame.saveScore();
             nyanGame.saveData();
-            $('#submit-score-button').fadeOut(1000);
-            $('#gameover > input[name="username"]').fadeOut(1000);
+            $('#gameover > button.dummy-saving-button').fadeOut(750);
+            $('#gameover > input[name="username"]').fadeOut(750, function() {
+                $('#gameover > h2').fadeIn(100);
+            });
         });
         
         // http://stackoverflow.com/questions/1996747/add-new-value-to-an-existing-array-in-javascript
