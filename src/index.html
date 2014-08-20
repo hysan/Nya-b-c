@@ -323,10 +323,68 @@
                 stopGameTimer()
                 currentLevel = 1;
                 currentScore = 0;
-                
-                $('#gameover-overlay').css({
-                    'visibility' : 'hidden'
-                });
+            }
+            
+            var setGameToDifficulty = function() {
+                console.log('Setting game difficulty to: ' + gameMode);
+                if (gameMode == NORMAL) {
+                    difficulty = 10; // game board size (default: 5)
+                    // filledCells = 0; 
+                    setSize = 3; // pairs, triples, etc.
+                    // selectedCount = 0;
+                    // selectedCells = [];
+                    timeleft = 5;
+                    timetotal = 5;
+                    bonustime = 3;
+                    penaltytime = -2;
+                } else if (gameMode == HARD) {
+                    difficulty = 3; // game board size (default: 5)
+                    // filledCells = 0; 
+                    setSize = 6; // pairs, triples, etc.
+                    // selectedCount = 0;
+                    // selectedCells = [];
+                    timeleft = 5;
+                    timetotal = 5;
+                    bonustime = 3;
+                    penaltytime = -2;
+                } else { // (default mode) gameMode == EASY or was oddly not set which would be a bug in the code
+                    difficulty = 5; // game board size (default: 5)
+                    // filledCells = 0; 
+                    setSize = 2; // pairs, triples, etc.
+                    // selectedCount = 0;
+                    // selectedCells = [];
+                    timeleft = 10;
+                    timetotal = 10;
+                    bonustime = 5;
+                    penaltytime = -2;
+                }
+            }
+            
+            // This is done based on what we set the game grid size to in
+            // setGameToDifficulty(). So make this match up.
+            var setGameGridStylesForDifficulty = function() {
+                if (gameMode == NORMAL) {
+                    $('#game-grid td').css({
+                        'font-size' : '4rem',
+                        'line-height': '5rem',
+                        'width': '9.5%', /* 95/10 = 9.5 */
+                        'height': '9.5%',
+                    });
+                } else if (gameMode == HARD) {
+                    $('#game-grid > td').css({
+                        'font-size' : '10rem',
+                        'line-height': '11rem',
+                        'width': '31.67%', /* 95/3 = 31.66666 */
+                        'height': '31.67%',
+                    });
+                } else { // (default mode) gameMode == EASY or was oddly not set which would be a bug in the code
+                    $('#game-grid > td').css({
+                        'font-size' : '8rem',
+                        'line-height': '9rem',
+                        'width': '19%', /* 95/5 = 19 */
+                        'height': '19%',
+                    });
+                }
             }
 
             // first clear the table of previous setups
@@ -353,6 +411,8 @@
                     grid += '</tr>';
                 }
                 $('#game-grid').append($(grid));
+                
+                setGameGridStylesForDifficulty();
             }
                 
             // http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
@@ -590,11 +650,18 @@
                 },
                 initGame: function() {
                     resetGameData();
+                    setGameToDifficulty();
                     updateScoreBy(0);
                     updateLevelBy(0);
                     createGameGrid();
                     addLetterSet();
                     addRandomLetter();
+                    $('#gameover-overlay').css({
+                        'visibility' : 'hidden'
+                    });
+                    $('#submit-score-button').css({
+                        'visibility' : 'hidden'
+                    });
                     $('#homescreen').css({
                         'visibility' : 'hidden'
                     });
@@ -672,6 +739,9 @@
                         'visibility' : 'hidden'
                     });
                     $('#gameover-overlay').css({
+                        'visibility' : 'hidden'
+                    });
+                    $('#submit-score-button').css({
                         'visibility' : 'hidden'
                     });
                 },
