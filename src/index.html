@@ -315,6 +315,53 @@
                 }
             }
             
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round
+            /**
+             * Decimal adjustment of a number.
+             *
+             * @param	{String}	type	The type of adjustment.
+             * @param	{Number}	value	The number.
+             * @param	{Integer}	exp		The exponent (the 10 logarithm of the adjustment base).
+             * @returns	{Number}			The adjusted value.
+             */
+            function decimalAdjust(type, value, exp) {
+                // If the exp is undefined or zero...
+                if (typeof exp === 'undefined' || +exp === 0) {
+                    return Math[type](value);
+                }
+                value = +value;
+                exp = +exp;
+                // If the value is not a number or the exp is not an integer...
+                if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+                    return NaN;
+                }
+                // Shift
+                value = value.toString().split('e');
+                value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+                // Shift back
+                value = value.toString().split('e');
+                return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+            }
+
+            // Decimal round
+            if (!Math.round10) {
+                Math.round10 = function(value, exp) {
+                    return decimalAdjust('round', value, exp);
+                };
+            }
+            // Decimal floor
+            if (!Math.floor10) {
+                Math.floor10 = function(value, exp) {
+                    return decimalAdjust('floor', value, exp);
+                };
+            }
+            // Decimal ceil
+            if (!Math.ceil10) {
+                Math.ceil10 = function(value, exp) {
+                    return decimalAdjust('ceil', value, exp);
+                };
+            }
+            
             var resetGameData = function() {
                 filledCells = 0; 
                 selectedCount = 0;
@@ -360,31 +407,21 @@
                 }
             }
             
-            // This is done based on what we set the game grid size to in
-            // setGameToDifficulty(). So make this match up.
             var setGameGridStylesForDifficulty = function() {
-                if (gameMode == NORMAL) {
-                    $('#game-grid td').css({
-                        'font-size' : '4rem',
-                        'line-height': '5rem',
-                        'width': '9.5%', /* 95/10 = 9.5 */
-                        'height': '9.5%',
-                    });
-                } else if (gameMode == HARD) {
-                    $('#game-grid > td').css({
-                        'font-size' : '10rem',
-                        'line-height': '11rem',
-                        'width': '31.67%', /* 95/3 = 31.66666 */
-                        'height': '31.67%',
-                    });
-                } else { // (default mode) gameMode == EASY or was oddly not set which would be a bug in the code
-                    $('#game-grid > td').css({
-                        'font-size' : '8rem',
-                        'line-height': '9rem',
-                        'width': '19%', /* 95/5 = 19 */
-                        'height': '19%',
-                    });
-                }
+                // various testing has how these settings (default in the css)
+                // to look the best and work well at all scales for a 5x5 grid.
+                // so we can use this as a base to scale everything from
+                // when the grid size is changed (difficulty var).
+                var baseFontSize = 8;
+                var baseLineHeight = 9;
+                var baseCellDimension = 19;
+                var baseGameGridDimension = 95;
+                $('#game-grid td').css({
+                    'font-size' : Math.round10((baseGameGridDimension * baseFontSize)/(difficulty * baseCellDimension), -2) + 'rem',
+                    'line-height': Math.round10((baseGameGridDimension * baseLineHeight)/(difficulty * baseCellDimension), -2) + 'rem',
+                    'width': Math.round10(baseGameGridDimension/difficulty, -2) + '%',
+                    'height': Math.round10(baseGameGridDimension/difficulty, -2) + '%'
+                });
             }
 
             // first clear the table of previous setups
