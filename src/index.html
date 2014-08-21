@@ -227,10 +227,10 @@
             var selectedCells = [];
             
             // All of these are in seconds.
-            var timeleft = 10;
-            var timetotal = 10;
-            var bonustime = 5;
-            var penaltytime = -2;
+            var timeleft = 7;
+            var timetotal = 7;
+            var bonustime = timetotal;
+            var penaltytime = 0;
             
             // This is the current progress bar animation timeout.
             var timeout = null;
@@ -371,39 +371,64 @@
                 currentLevel = 1;
                 currentScore = 0;
             }
-            
+
+            /**
+             * Here are the game rules and how things ramp up in difficulty.
+             * 
+             * ***** Game Basics *****
+             * The game is composed of an NxN board.
+             * This board is filled with X letters + 1 to start.
+             * If your timer reaches 0, then another X letters are added.
+             * Letters can be removed if a user makes a chain of X correctly.
+             *     If they do this, then bonustime is added.
+             *     They also get points added to their score.
+             * If the user makes an incorrect chain of X, the letters stay.
+             *     If they get it wrong, penaltytime is added (e.g., docked).
+             * The game ends if the timer hits 0 and there is no room to add 
+             *   X new letters.
+             *
+             * ***** Difficulty Ramping *****
+             * The start of the game can be harder by setting the difficulty.
+             *   This also effects what rules are changed after you level up.
+             * The game increases in difficulty whenever you level up.
+             * These changes can include (based on mode):
+             *     Less totaltime.
+             *     More or less bonustime.
+             *     Greater penalty time.
+             *     Increased setSize.
+             *     (possibly) Bigger gameboard
+             *     (maybe todo?) Penalty letters being added.
+             *
+             * ***** Extra Features / Easter Eggs *****
+             * Combo/Chain counting would fit in well with the theme.
+             *     You can also do things like using the combo as a multiplier 
+             *     ala: Floor(comboCount/10) * bonustime = what we add
+             *
+             */
             var setGameToDifficulty = function() {
                 console.log('Setting game difficulty to: ' + gameMode);
                 if (gameMode == NORMAL) {
                     difficulty = 10; // game board size (default: 5)
-                    // filledCells = 0; 
                     setSize = 3; // pairs, triples, etc.
-                    // selectedCount = 0;
-                    // selectedCells = [];
                     timeleft = 5;
                     timetotal = 5;
                     bonustime = 3;
                     penaltytime = -2;
                 } else if (gameMode == HARD) {
                     difficulty = 3; // game board size (default: 5)
-                    // filledCells = 0; 
                     setSize = 6; // pairs, triples, etc.
-                    // selectedCount = 0;
-                    // selectedCells = [];
                     timeleft = 5;
                     timetotal = 5;
                     bonustime = 3;
                     penaltytime = -2;
                 } else { // (default mode) gameMode == EASY or was oddly not set which would be a bug in the code
+                    // These initial settings all mimic the original game's defaults.
                     difficulty = 5; // game board size (default: 5)
-                    // filledCells = 0; 
                     setSize = 2; // pairs, triples, etc.
-                    // selectedCount = 0;
-                    // selectedCells = [];
-                    timeleft = 10;
-                    timetotal = 10;
-                    bonustime = 5;
-                    penaltytime = -2;
+                    timeleft = 7;
+                    timetotal = 7;
+                    bonustime = timetotal;
+                    penaltytime = 0;
                 }
             }
             
@@ -663,16 +688,16 @@
                             console.log('score!');
                             emptySelectedCells();
                             addLetterSet();
-                            // original game just reset the timer
-                            // I'm just adding bonus time to make it harder
-                            // updateGameTimer(totaltime);
+                            // The original game just reset the timer.
+                            // I'm just adding bonus time to make it harder.
+                            // To replicate this, you can just set bonustime = totaltime
                             updateGameTimer(bonustime);
                         } else {
                             console.log('noMatch();');
                             unselectSelectedCells();
                             // original game would doc time when you get it wrong.
                             // we won't be doing that
-                            // updateGameTimer(penaltytime);
+                            updateGameTimer(penaltytime);
                         }
                         updateScoreBy(calculatePoints(chain));
 
