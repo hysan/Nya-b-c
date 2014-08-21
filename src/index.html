@@ -404,19 +404,30 @@
              *     You can also do things like using the combo as a multiplier 
              *     ala: Floor(comboCount/10) * bonustime = what we add
              *
+             * ***** Game Design Notes *****
+             * difficulty^2 / setSize = # of chances you have before losing
+             * For the timer, 2 per 7 sec is reasonable for EASY. If you 
+             *   shorten the timer, think about how hard it is to read, find 
+             *   the first letter, and then click on everything in the allotted 
+             *   time. It's actually pretty damn hard. So NORMAL might have to 
+             *   be the game mode from the original game. That would be our 
+             *   baseline for difficulty.
+             * On penaltytime, loss of time shouldn't make it impossible to do 
+             *   two full rounds of clicking. Think about how many chances you 
+             *   want the user to have.
              */
             var setGameToDifficulty = function() {
                 console.log('Setting game difficulty to: ' + gameMode);
                 if (gameMode == NORMAL) {
                     difficulty = 5;
                     setSize = 2;
-                    timeleft = 5;
-                    timetotal = 5;
+                    timeleft = 6;
+                    timetotal = 6;
                     bonustime = 3;
                     penaltytime = 0;
                 } else if (gameMode == HARD) {
                     difficulty = 4;
-                    setSize = 4;
+                    setSize = 3;
                     timeleft = 5;
                     timetotal = 5;
                     bonustime = 3;
