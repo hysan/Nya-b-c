@@ -225,6 +225,7 @@
             var selectedCount = 0;
             // http://stackoverflow.com/questions/11500492/what-are-the-best-practices-to-follow-when-declaring-an-array-in-javascript#11500550
             var selectedCells = [];
+            var comboCount = 0;
             
             // All of these are in seconds.
             var timeleft = 7;
@@ -370,6 +371,7 @@
                 stopGameTimer()
                 currentLevel = 1;
                 currentScore = 0;
+                comboCount = 0;
             }
 
             /**
@@ -701,12 +703,12 @@
                         var chain = currentChainLength();
                         console.log('chain = ' + chain);
                         
-                        updateScoreBy(calculatePoints(chain));
-                        updateLevelBy(calculateLevel() - currentLevel);
-                        
                         if (chain == setSize) {
                             console.log('score!');
                             emptySelectedCells();
+                            comboCount++;
+                            updateScoreBy(calculatePoints(chain));
+                            updateLevelBy(calculateLevel() - currentLevel);
                             addLetterSet();
                             // The original game just reset the timer.
                             // I'm just adding bonus time to make it harder.
@@ -714,6 +716,10 @@
                             updateGameTimer(bonustime);
                         } else {
                             console.log('noMatch();');
+                            comboCount = 0;
+                            updateScoreBy(calculatePoints(chain));
+                            // Cannot level up on a miss.
+                            // updateLevelBy(calculateLevel() - currentLevel);
                             unselectSelectedCells();
                             // original game would doc time when you get it wrong.
                             // we won't be doing that
