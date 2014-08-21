@@ -249,7 +249,7 @@
             var gameDomain = (document.domain == null || document.domain == '' ? 'file' : document.domain) + '.nyan-letters.';
             var canSave = false;
             // These are all set to their defaults initially.
-            var username = 'Doraemon';
+            var username = 'Nyanko';
             var EASY = 'EASY'; var NORMAL = 'NORMAL'; var HARD = 'HARD'; // possible game modes (static vars)
             var gameMode = EASY;
             var topTen = [
@@ -408,19 +408,19 @@
             var setGameToDifficulty = function() {
                 console.log('Setting game difficulty to: ' + gameMode);
                 if (gameMode == NORMAL) {
-                    difficulty = 10; // game board size (default: 5)
-                    setSize = 3; // pairs, triples, etc.
+                    difficulty = 5;
+                    setSize = 2;
                     timeleft = 5;
                     timetotal = 5;
                     bonustime = 3;
-                    penaltytime = -2;
+                    penaltytime = 0;
                 } else if (gameMode == HARD) {
-                    difficulty = 3; // game board size (default: 5)
-                    setSize = 6; // pairs, triples, etc.
+                    difficulty = 4;
+                    setSize = 4;
                     timeleft = 5;
                     timetotal = 5;
                     bonustime = 3;
-                    penaltytime = -2;
+                    penaltytime = -1;
                 } else { // (default mode) gameMode == EASY or was oddly not set which would be a bug in the code
                     // These initial settings all mimic the original game's defaults.
                     difficulty = 5; // game board size (default: 5)
@@ -652,7 +652,13 @@
                 $('#score').text('Score ' + currentScore);
             }
             
+            var calculateLevel = function() {
+                // TODO
+                return currentLevel;
+            }
+            
             var updateLevelBy = function(levels) {
+                // TODO: loop this and make an animation on each level up
                 currentLevel += levels;
                 $('#level').text('Level ' + currentLevel);
             }
@@ -684,6 +690,9 @@
                         var chain = currentChainLength();
                         console.log('chain = ' + chain);
                         
+                        updateScoreBy(calculatePoints(chain));
+                        updateLevelBy(calculateLevel() - currentLevel);
+                        
                         if (chain == setSize) {
                             console.log('score!');
                             emptySelectedCells();
@@ -699,7 +708,6 @@
                             // we won't be doing that
                             updateGameTimer(penaltytime);
                         }
-                        updateScoreBy(calculatePoints(chain));
 
                         console.log('filledCells post clear = ' + filledCells);
                     }
