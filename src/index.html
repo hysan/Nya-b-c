@@ -366,12 +366,15 @@
                 };
             }
             
-            var resetGameData = function() {
+            var resetGameBoard = function() {
                 filledCells = 0; 
                 selectedCount = 0;
                 emptyAnArray(selectedCells);
                 timeleft = timetotal;
-                stopGameTimer()
+                stopGameTimer();
+            }
+            
+            var resetGameData = function() {
                 currentLevel = 1;
                 currentScore = 0;
                 comboCount = 0;
@@ -612,6 +615,16 @@
                 selectedCount = 0;
             }
             
+            var clearAllCells = function() {
+                $('td.active').text('');
+                $('td.active').removeClass('active');
+                $('td.selected').text('');
+                $('td.selected').removeClass('selected');
+                filledCells = 0; 
+                selectedCount = 0;
+                emptyAnArray(selectedCells);
+            }
+            
             // http://api.jquery.com/animate/
             // Use animate with a callback.
             // In the callback closure, add new letters and reset the timer.
@@ -693,14 +706,50 @@
             }
             
             var calculateLevel = function() {
-                // TODO
-                return currentLevel;
+                return Math.floor(currentScore / (50 * (setSize - 1))) + 1;
             }
             
             var updateLevelBy = function(levels) {
-                // TODO: loop this and make an animation on each level up
-                currentLevel += levels;
-                $('#level').text('Level ' + currentLevel);
+                for (var i = 0; i < levels; i++) {
+                    currentLevel++;
+                    // TODO: make the level up into an animation
+                    $('#level').text('Level ' + currentLevel);
+                    
+                    // Now tweak game settings post leveling up based on difficulty.
+                    // First, for all difficulties, the game board gets bigger every 10 levels.
+                    // When this happens, users get a free board wipe.
+                    // Users also get a bonus 100 points.
+                    if (currentLevel % 10 == 0 && difficulty < 10) {
+                        resetGameBoard();
+                        difficulty++;
+                        createGameGrid();
+                        updateScoreBy(100);
+                    }
+                    // setSize will be capped at either:
+                    //   this hard number or 
+                    //   a number based on how many sets can even fit on the board
+                    var setSizeCap = 13; // Can be anything up to 26. Change this for testing.
+                    var newSetSize = setSize;
+                    if (gameMode == NORMAL) {
+                        if (currentLevel % 2 == 0) {
+                            newSetSize = Math.min(setSize + 1, setSizeCap, Math.floor((difficulty*difficulty)/5) - 1);
+                        }
+                    } else if (gameMode == HARD) {
+                        newSetSize = Math.min(setSize + 1, setSizeCap, Math.floor((difficulty*difficulty)/4) - 1);
+                    } else {
+                        if (currentLevel % 3 == 0) {
+                            newSetSize = Math.min(setSize + 1, setSizeCap, Math.floor((difficulty*difficulty)/6) - 1);
+                        } 
+                    }
+                    // If we increased the set size, clear the board as a bonus.
+                    // This also helps us avoid the potential problem where the user 
+                    // can lose after having their setSize increase.
+                    if (newSetSize != setSize) {
+                        clearAllCells();
+                        setSize = newSetSize;
+                        // TODO: update the chain we show in the GUI
+                    }
+                }
             }
             
             var gameover = function() {
@@ -763,13 +812,20 @@
                     selectedCount--;
                 },
                 initGame: function() {
+                    resetGameBoard();
                     resetGameData();
                     setGameToDifficulty();
                     updateScoreBy(0);
                     updateLevelBy(0);
                     createGameGrid();
                     addLetterSet();
-                    addRandomLetter();
+                    // Original game added a random letter at the start to throw you off.
+                    // Then they add their next two letters with one matching this random letter,
+                    // and the other being random. But their implementation is buggy as the next 
+                    // random letter can match and it won't correctly set as a pair.
+                    // So yeah, lots of bugs in the original game. I'm taking this out as it is 
+                    // easier to design he game without having to do this.
+                    // addRandomLetter();
                     $('#gameover-overlay').css({
                         'visibility' : 'hidden'
                     });
