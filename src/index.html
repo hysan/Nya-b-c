@@ -138,8 +138,10 @@
             <div id="progressBar">
                 <div></div>
             </div>
+            <h3 id="chain">26</h3>
             <h1 id="level">Level 1</h1>
-            <h2 id="score">Score 15</h2>
+            <h2>Score<br/><span id="score">15</span></h2>
+            <h3 id="combo">999</h3>
         </div>
         <div class="game-board">
             <table id="game-grid">
@@ -377,7 +379,7 @@
             var resetGameData = function() {
                 currentLevel = 1;
                 currentScore = 0;
-                comboCount = 0;
+                resetComboCounter();
             }
 
             /**
@@ -449,6 +451,7 @@
                     bonustime = timetotal;
                     penaltytime = 0;
                 }
+                setSetSize();
             }
             
             var setGameGridStylesForDifficulty = function() {
@@ -635,7 +638,7 @@
                 $('#progressBar').find('div').animate({ width: 0 }, timeleft * 1000, 'linear', function(){
                     if (addLetterSet()) {
                         // If you want to reset the comboCount when they run out of time, too.
-                        // comboCount = 0;
+                        // resetComboCounter();
                         updateGameTimer(timetotal);
                     } else {
                         console.log('gameover');
@@ -667,6 +670,22 @@
                 // timeleft would have been initialized to timetotal.
                 timeleft = Math.min(timeleft, timetotal);
                 console.log("updateTimeLeft, timetotal = " + timetotal + " timeleft = " + timeleft);
+            }
+            
+            var setSetSize = function() {
+                // TODO: add nice animation
+                $('#chain').text(setSize);
+            }
+            
+            var upComboCounter = function() {
+                // TODO: add nice animation
+                comboCount++;
+                $('#combo').text(comboCount);
+            }
+            
+            var resetComboCounter = function() {
+                comboCount = 0;
+                $('#combo').text(comboCount);
             }
             
             var calculatePoints = function(chain) {
@@ -702,7 +721,7 @@
             
             var updateScoreBy = function(points) {
                 currentScore += points;
-                $('#score').text('Score ' + currentScore);
+                $('#score').text(currentScore);
             }
             
             var calculateLevel = function() {
@@ -747,7 +766,7 @@
                     if (newSetSize != setSize) {
                         clearAllCells();
                         setSize = newSetSize;
-                        // TODO: update the chain we show in the GUI
+                        setSetSize();
                     }
                 }
             }
@@ -782,7 +801,7 @@
                         if (chain == setSize) {
                             console.log('score!');
                             emptySelectedCells();
-                            comboCount++;
+                            upComboCounter();
                             updateScoreBy(calculatePoints(chain));
                             updateLevelBy(calculateLevel() - currentLevel);
                             addLetterSet();
@@ -792,7 +811,7 @@
                             updateGameTimer(bonustime);
                         } else {
                             console.log('noMatch();');
-                            comboCount = 0;
+                            resetComboCounter();
                             updateScoreBy(calculatePoints(chain));
                             // Cannot level up on a miss.
                             // updateLevelBy(calculateLevel() - currentLevel);

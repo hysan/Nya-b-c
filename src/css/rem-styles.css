@@ -89,6 +89,16 @@ html {
     color: #918A83;
     margin: 0;
 }
+#chain {
+    font-weight: normal;
+    color: #E8900C;
+    margin: 0;
+}
+#combo {
+    font-weight: normal;
+    color: #FF0000;
+    margin: 0;
+}
 #game-grid td {
     /**
      * http://css-tricks.com/what-is-vertical-align/
@@ -301,7 +311,37 @@ button.difficulty-button.selected {
 }
 .score-table h2 {
     font-size: 7rem;
-    line-height: 8rem;
+    line-height: 7rem;
+}
+#chain {
+    font-size: 7rem;
+    line-height: 9rem;
+    vertical-align: middle;
+    width: 9rem;
+    height: 9rem;
+    border: 1rem dashed #E8900C;
+    -moz-border-radius: 2.5rem;
+    -webkit-border-radius: 2.5rem;
+    border-radius: 2.5rem; /* future proofing */
+    -khtml-border-radius: 2.5rem; /* for old Konqueror browsers */
+    position: absolute;
+    bottom: calc(50% - 8.5rem); /* Half it's own height and the height of the progressBar to center this. */
+    left: 2.5%;
+}
+#combo {
+    font-size: 5rem;
+    line-height: 9rem;
+    vertical-align: middle;
+    width: 9rem;
+    height: 9rem;
+    border: 1rem dotted #FF0000;
+    -moz-border-radius: 2rem;
+    -webkit-border-radius: 2rem;
+    border-radius: 2rem; /* future proofing */
+    -khtml-border-radius: 2rem; /* for old Konqueror browsers */
+    position: absolute;
+    bottom: calc(50% - 8.5rem); /* Half it's own height and the height of the progressBar to center this. */
+    right: 2.5%;
 }
 #game-grid {
     height: 95%;
