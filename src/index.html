@@ -118,6 +118,9 @@
                 http://www.sitepoint.com/settimeout-example/
             Faster Math.max and Math.min:
                 http://ejohn.org/blog/fast-javascript-maxmin/
+            There is a good chance that currying would be a very neat way of handling the various gameMode specific code/functions.
+            But that will be something I do in the far future as refactoring.
+                https://medium.com/@kbrainwave/currying-in-javascript-ce6da2d324fe
             -----
             Styling notes:
                 redefine everything in % or vmin/vmax, like fonts and tables
@@ -618,6 +621,8 @@
                 $('#progressBar').find('div').animate({ width: progressBarWidth }, 0, 'linear');
                 $('#progressBar').find('div').animate({ width: 0 }, timeleft * 1000, 'linear', function(){
                     if (addLetterSet()) {
+                        // If you want to reset the comboCount when they run out of time, too.
+                        // comboCount = 0;
                         updateGameTimer(timetotal);
                     } else {
                         console.log('gameover');
@@ -652,12 +657,34 @@
             }
             
             var calculatePoints = function(chain) {
-                // TODO: how much score to add
                 var points = 0;
-                if (chain == setSize) {
-                    return chain * chain;
+                var pointBase = 5;
+                var difficultyBonusMultiplier = 0;
+
+                if (gameMode == NORMAL) {
+                    difficultyBonusMultiplier = 1;
+                } else if (gameMode == HARD) {
+                    difficultyBonusMultiplier = 2;
+                } else {
+                    difficultyBonusMultiplier = 0;
                 }
-                return chain;
+                
+                // Add the bonus points.
+                // This will be 0 if the combo is shorter than 5,
+                // so you only get bonus points when comboing 5 or more.
+                // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log
+                var comboBonusPoints = Math.floor(Math.log(comboCount > 4 ? comboCount : 1) * (currentLevel + difficultyBonusMultiplier) * pointBase);
+                points += comboBonusPoints;
+                // TODO: bonusPointsAnimation(comboBonusPoints);
+                // This will let us handle cases for when they got a 100% correct match vs partial or close matches.
+                if (chain == setSize) {
+                    // Add points based on length of chain matched.
+                    points += (chain - 1) * pointBase;
+                } else {
+                    // Or add points based on how closely they matched.
+                    // points += howCloseTheyGot();
+                }
+                return points;
             }
             
             var updateScoreBy = function(points) {
