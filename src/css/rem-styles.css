@@ -425,11 +425,13 @@ button.difficulty-button.selected {
     top: 23.75rem;
     left:0;right:0; /* horizontal center */
 }
-#title {
-    width: 100%;
+#title img {
+    margin: 7rem 0;
+    height: 33rem;
     font-size: 9rem;
-    line-height: 10rem;
-    margin: 14rem 0;
+    line-height: 38rem; /* Previous style of 10rem line height + 14x2 top/bottom margins */
+    /* line-height: 43rem; /* Should be move the buttons to where the current image style is but doesn't... */
+    text-align: center;
 }
 #homescreen button {
     width: 80%;
