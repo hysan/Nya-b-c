@@ -89,12 +89,12 @@ html {
     color: #918A83;
     margin: 0;
 }
-#chain {
+#chain, #chain-caption {
     font-weight: normal;
     color: #E8900C;
     margin: 0;
 }
-#combo {
+#combo, #combo-caption {
     font-weight: normal;
     color: #FF0000;
     margin: 0;
@@ -328,6 +328,14 @@ button.difficulty-button.selected {
     bottom: calc(50% - 8.5rem); /* Half it's own height and the height of the progressBar to center this. */
     left: 2.5%;
 }
+#chain-caption {
+    width: 11rem;
+    font-size: 3rem;
+    line-height: 4rem;
+    position: absolute;
+    bottom: calc(50% - 13rem); /* Half it's own height and the height of the progressBar to center this. */
+    left: 2.5%;
+}
 #combo {
     font-size: 5rem;
     line-height: 9rem;
@@ -341,6 +349,14 @@ button.difficulty-button.selected {
     -khtml-border-radius: 2rem; /* for old Konqueror browsers */
     position: absolute;
     bottom: calc(50% - 8.5rem); /* Half it's own height and the height of the progressBar to center this. */
+    right: 2.5%;
+}
+#combo-caption {
+    width: 10rem;
+    font-size: 3rem;
+    line-height: 4rem;
+    position: absolute;
+    bottom: calc(50% - 13rem); /* Half it's own height and the height of the progressBar to center this. */
     right: 2.5%;
 }
 #game-grid {
