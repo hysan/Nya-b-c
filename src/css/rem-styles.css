@@ -14,7 +14,7 @@ html {
  * Prevent element highlighting for everything we use except input fields.
  * http://stackoverflow.com/questions/826782/css-rule-to-disable-text-selection-highlighting
  */
-button, table, td, tr, h1, h2, h3, h4, h5, h6, label, div, img {
+button, table, td, tr, h1, h2, h3, h4, h5, h6, label, div, img, th, ol, li {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
