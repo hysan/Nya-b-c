@@ -785,6 +785,8 @@
             
             var gameover = function() {
                 stopGameTimer();
+                var audio = new Audio('audio/jingles_SAX07.ogg');
+                audio.play();
                 $('#gameover > input[name="username"]').val(username);
                 $('#submit-score-button').css({
                     'visibility' : 'visible'
