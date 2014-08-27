@@ -651,6 +651,8 @@
                     if (addLetterSet()) {
                         // If you want to reset the comboCount when they run out of time, too.
                         // resetComboCounter();
+                        var audio = new Audio('audio/zap2.ogg');
+                        audio.play();
                         updateGameTimer(timetotal);
                     } else {
                         console.log('gameover');
@@ -824,6 +826,8 @@
                             // I'm just adding bonus time to make it harder.
                             // To replicate this, you can just set bonustime = totaltime
                             updateGameTimer(bonustime);
+                            var audio = new Audio('audio/zap1.ogg');
+                            audio.play();
                         } else {
                             console.log('noMatch();');
                             resetComboCounter();
@@ -834,6 +838,8 @@
                             // original game would doc time when you get it wrong.
                             // we won't be doing that
                             updateGameTimer(penaltytime);
+                            var audio = new Audio('audio/zap2.ogg');
+                            audio.play();
                         }
 
                         console.log('filledCells post clear = ' + filledCells);
