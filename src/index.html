@@ -142,6 +142,9 @@
             <div id="progressBar">
                 <div></div>
             </div>
+            <ol id="selected-letter-display">
+                <!-- filled in dynamically -->
+            </ol>
             <h3 id="chain">26</h3>
             <h4 id="chain-caption">chain</h4>
             <h1 id="level">Level 1</h1>
@@ -378,6 +381,7 @@
                 filledCells = 0; 
                 selectedCount = 0;
                 emptyAnArray(selectedCells);
+                clearChildElements('selected-letter-display');
                 timeleft = timetotal;
                 stopGameTimer();
             }
@@ -613,6 +617,7 @@
                 filledCells -= selectedCount;
                 emptyAnArray(selectedCells);
                 selectedCount = 0;
+                clearChildElements('selected-letter-display');
             }
             
             var unselectSelectedCells = function() {
@@ -622,6 +627,7 @@
                 }
                 emptyAnArray(selectedCells);
                 selectedCount = 0;
+                clearChildElements('selected-letter-display');
             }
             
             var clearAllCells = function() {
@@ -799,6 +805,7 @@
                     $('#' + cellId).removeClass('active');
                     $('#' + cellId).addClass('selected');
                     selectedCells.push(cellId);
+                    $('#selected-letter-display').append($('<li id="display-' + cellId + '">' + $('#' + cellId).text() + '</li>'));
                     selectedCount++;
                     if (selectedCount == setSize) {
                         var chain = currentChainLength();
@@ -833,6 +840,10 @@
                 unselectCell: function(cellId) {
                     $('#' + cellId).removeClass('selected');
                     $('#' + cellId).addClass('active');
+                    // How to delete a node in javascript:
+                    // http://stackoverflow.com/questions/3387427/javascript-remove-element-by-id
+                    var element = document.getElementById('display-' + cellId);
+                    element.parentNode.removeChild(element);
                     removeFromArray(selectedCells, cellId);
                     selectedCount--;
                 },
