@@ -1077,7 +1077,11 @@
             nyanGame.unselectCell($(this).attr('id'));
         });
         
-
+        $("button").click(function(event) {
+            var audio = new Audio('audio/mouseclick1.ogg');
+            audio.play();
+        });
+        
         /*
         Getting viewport units supported everywhere:
         http://stackoverflow.com/questions/13948713/is-there-any-cross-browser-javascript-for-making-vh-and-vw-units-work
