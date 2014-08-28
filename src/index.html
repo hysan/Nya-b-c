@@ -252,7 +252,7 @@
             
             var currentLevel = 1;
             var currentScore = 0;
-
+            
             // Game Save Data
             /**
              * Setting this will prevent collisions if I have multiple games on 
@@ -280,10 +280,75 @@
                 {'username': 'J', 'score': '10'}
             ]
 
+            // Sounds //
+            // http://stackoverflow.com/questions/4083537/play-sounds-on-mobile-safari
+            // http://html5doctor.com/native-audio-in-the-browser/
+            // Use this if we can't play sounds.
+            var dummyAudio = function() {
+                return {
+                    play : function() {
+                        return;
+                    },
+                    pause : function() {
+                        return;
+                    },
+                    canPlayType : function() {
+                        return false;
+                    },
+                    buffered : function() {
+                        return;
+                    }
+                };
+            }
+            // Need to check the canPlayType first or an exception
+            // will be thrown for those browsers that don't support it
+            var myAudio = document.createElement('audio');
+            if (myAudio.canPlayType) {
+                // Currently canPlayType(type) returns: "", "maybe" or "probably" 
+
+                var canPlayMp3 = !!myAudio.canPlayType && "" != myAudio.canPlayType('audio/mpeg');
+                var canPlayOgg = !!myAudio.canPlayType && "" != myAudio.canPlayType('audio/ogg; codecs="vorbis"');
+            } else {
+                var audioLibrary = {
+                    'timesUp' : dummyAudio,
+                    'levelUp' : dummyAudio,
+                    'gameover' : dummyAudio,
+                    'match' : dummyAudio,
+                    'mismatch' : dummyAudio,
+                    'selectCell' : dummyAudio,
+                    'unselectCell' : dummyAudio,
+                    'buttonClick' : dummyAudio
+                };
+            }
+            if (canPlayOgg) {
+                var audioLibrary = {
+                    'timesUp' : new Audio('audio/zap2.ogg'),
+                    'levelUp' : new Audio('audio/powerUp2.ogg'),
+                    'gameover' : new Audio('audio/jingles_SAX07.ogg'),
+                    'match' : new Audio('audio/zap1.ogg'),
+                    'mismatch' : new Audio('audio/zap2.ogg'),
+                    'selectCell' : new Audio('audio/switch10.ogg'),
+                    'unselectCell' : new Audio('audio/switch11.ogg'),
+                    'buttonClick' : new Audio('audio/mouseclick1.ogg')
+                };
+            } else if (canPlayMp3) {
+                var audioLibrary = {
+                    'timesUp' : new Audio('audio/zap2.mp3'),
+                    'levelUp' : new Audio('audio/powerUp2.mp3'),
+                    'gameover' : new Audio('audio/jingles_SAX07.mp3'),
+                    'match' : new Audio('audio/zap1.mp3'),
+                    'mismatch' : new Audio('audio/zap2.mp3'),
+                    'selectCell' : new Audio('audio/switch10.mp3'),
+                    'unselectCell' : new Audio('audio/switch11.mp3'),
+                    'buttonClick' : new Audio('audio/mouseclick1.mp3')
+                };
+            }
+
+            
             /**
              * Private game functions.
              */
-             
+
             /**
              * Use Web Storage (aka: Local Storage or DOM Storage)
              * because it has the most browser support and the 
@@ -651,8 +716,7 @@
                     if (addLetterSet()) {
                         // If you want to reset the comboCount when they run out of time, too.
                         // resetComboCounter();
-                        var audio = new Audio('audio/zap2.ogg');
-                        audio.play();
+                        audioLibrary['timesUp'].play();
                         updateGameTimer(timetotal);
                     } else {
                         console.log('gameover');
@@ -782,15 +846,13 @@
                         setSize = newSetSize;
                         setSetSize();
                     }
-                    var audio = new Audio('audio/powerUp2.ogg');
-                    audio.play();
+                    audioLibrary['levelUp'].play();
                 }
             }
             
             var gameover = function() {
                 stopGameTimer();
-                var audio = new Audio('audio/jingles_SAX07.ogg');
-                audio.play();
+                audioLibrary['gameover'].play();
                 $('#gameover > input[name="username"]').val(username);
                 $('#submit-score-button').css({
                     'visibility' : 'visible'
@@ -808,6 +870,7 @@
              */
             return  {
                 selectCell: function(cellId) {
+                    audioLibrary['selectCell'].play();
                     $('#' + cellId).removeClass('active');
                     $('#' + cellId).addClass('selected');
                     selectedCells.push(cellId);
@@ -828,8 +891,7 @@
                             // I'm just adding bonus time to make it harder.
                             // To replicate this, you can just set bonustime = totaltime
                             updateGameTimer(bonustime);
-                            var audio = new Audio('audio/zap1.ogg');
-                            audio.play();
+                            audioLibrary['match'].play();
                         } else {
                             console.log('noMatch();');
                             resetComboCounter();
@@ -840,14 +902,14 @@
                             // original game would doc time when you get it wrong.
                             // we won't be doing that
                             updateGameTimer(penaltytime);
-                            var audio = new Audio('audio/zap2.ogg');
-                            audio.play();
+                            audioLibrary['mismatch'].play();
                         }
 
                         console.log('filledCells post clear = ' + filledCells);
                     }
                 },
                 unselectCell: function(cellId) {
+                    audioLibrary['unselectCell'].play();
                     $('#' + cellId).removeClass('selected');
                     $('#' + cellId).addClass('active');
                     // How to delete a node in javascript:
@@ -1015,6 +1077,9 @@
                         'username': username,
                         'score': currentScore
                     });
+                },
+                buttonClick: function() {
+                    audioLibrary['buttonClick'].play();
                 }
             };
         }(); // the parens here cause the anonymous function to execute and return
@@ -1076,20 +1141,15 @@
         
         // http://stackoverflow.com/questions/1996747/add-new-value-to-an-existing-array-in-javascript
         $(document.body).on('click', "td[id^='cell-'][class='active']" ,function() {
-            var audio = new Audio('audio/switch10.ogg');
-            audio.play();
             nyanGame.selectCell($(this).attr('id'));
         });
         
         $(document.body).on('click', "td[id^='cell-'][class='selected']" ,function() {
-            var audio = new Audio('audio/switch11.ogg');
-            audio.play();
             nyanGame.unselectCell($(this).attr('id'));
         });
         
         $("button").click(function(event) {
-            var audio = new Audio('audio/mouseclick1.ogg');
-            audio.play();
+            nyanGame.buttonClick();
         });
         
         /*
