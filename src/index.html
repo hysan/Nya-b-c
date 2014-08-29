@@ -220,6 +220,7 @@
          https://github.com/ftlabs/fastclick
     -->
     <script type='application/javascript' src='js/fastclick.js'></script>
+    <script type='application/javascript' src='js/howler.min.js'></script>
     
     <script>       
         /**
@@ -303,13 +304,26 @@
             // Need to check the canPlayType first or an exception
             // will be thrown for those browsers that don't support it
             var myAudio = document.createElement('audio');
+            var audioLibrary = null;
             if (myAudio.canPlayType) {
                 // Currently canPlayType(type) returns: "", "maybe" or "probably" 
 
                 var canPlayMp3 = !!myAudio.canPlayType && "" != myAudio.canPlayType('audio/mpeg');
                 var canPlayOgg = !!myAudio.canPlayType && "" != myAudio.canPlayType('audio/ogg; codecs="vorbis"');
+                if (canPlayMp3 || canPlayOgg) {
+                    audioLibrary = {
+                        'timesUp' : new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.mp3'] }),
+                        'levelUp' : new Howl({ urls: ['audio/powerUp2.ogg', 'audio/powerUp2.mp3'] }),
+                        'gameover' : new Howl({ urls: ['audio/jingles_SAX07.ogg', 'audio/jingles_SAX07.mp3'] }),
+                        'match' : new Howl({ urls: ['audio/zap1.ogg', 'audio/zap1.mp3'] }),
+                        'mismatch' : new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.mp3'] }),
+                        'selectCell' : new Howl({ urls: ['audio/switch10.ogg', 'audio/switch10.mp3'] }),
+                        'unselectCell' : new Howl({ urls: ['audio/switch11.ogg', 'audio/switch11.mp3'] }),
+                        'buttonClick' : new Howl({ urls: ['audio/mouseclick1.ogg', 'audio/mouseclick1.mp3'] })
+                    };
+                }
             } else {
-                var audioLibrary = {
+                audioLibrary = {
                     'timesUp' : dummyAudio,
                     'levelUp' : dummyAudio,
                     'gameover' : dummyAudio,
@@ -320,30 +334,7 @@
                     'buttonClick' : dummyAudio
                 };
             }
-            if (canPlayOgg) {
-                var audioLibrary = {
-                    'timesUp' : new Audio('audio/zap2.ogg'),
-                    'levelUp' : new Audio('audio/powerUp2.ogg'),
-                    'gameover' : new Audio('audio/jingles_SAX07.ogg'),
-                    'match' : new Audio('audio/zap1.ogg'),
-                    'mismatch' : new Audio('audio/zap2.ogg'),
-                    'selectCell' : new Audio('audio/switch10.ogg'),
-                    'unselectCell' : new Audio('audio/switch11.ogg'),
-                    'buttonClick' : new Audio('audio/mouseclick1.ogg')
-                };
-            } else if (canPlayMp3) {
-                var audioLibrary = {
-                    'timesUp' : new Audio('audio/zap2.mp3'),
-                    'levelUp' : new Audio('audio/powerUp2.mp3'),
-                    'gameover' : new Audio('audio/jingles_SAX07.mp3'),
-                    'match' : new Audio('audio/zap1.mp3'),
-                    'mismatch' : new Audio('audio/zap2.mp3'),
-                    'selectCell' : new Audio('audio/switch10.mp3'),
-                    'unselectCell' : new Audio('audio/switch11.mp3'),
-                    'buttonClick' : new Audio('audio/mouseclick1.mp3')
-                };
-            }
-
+            
             
             /**
              * Private game functions.
