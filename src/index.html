@@ -304,7 +304,16 @@
             // Need to check the canPlayType first or an exception
             // will be thrown for those browsers that don't support it
             var myAudio = document.createElement('audio');
-            var audioLibrary = null;
+            var audioLibrary = {
+                'timesUp' : dummyAudio,
+                'levelUp' : dummyAudio,
+                'gameover' : dummyAudio,
+                'match' : dummyAudio,
+                'mismatch' : dummyAudio,
+                'selectCell' : dummyAudio,
+                'unselectCell' : dummyAudio,
+                'buttonClick' : dummyAudio
+            };
             if (myAudio.canPlayType) {
                 // Currently canPlayType(type) returns: "", "maybe" or "probably" 
 
@@ -322,17 +331,6 @@
                         'buttonClick' : new Howl({ urls: ['audio/mouseclick1.ogg', 'audio/mouseclick1.mp3'] })
                     };
                 }
-            } else {
-                audioLibrary = {
-                    'timesUp' : dummyAudio,
-                    'levelUp' : dummyAudio,
-                    'gameover' : dummyAudio,
-                    'match' : dummyAudio,
-                    'mismatch' : dummyAudio,
-                    'selectCell' : dummyAudio,
-                    'unselectCell' : dummyAudio,
-                    'buttonClick' : dummyAudio
-                };
             }
             
             
