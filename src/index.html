@@ -208,6 +208,17 @@
         <button id="save-settings-button" class="control-button">Save</button>
         <button class="control-button homescreen-button">Close</button>
     </div>
+    <!-- Hidden Screen -->
+    <div id="preloads" class="game-container">
+        <audio id="powerUp2" src="audio/powerUp2.m4a" controls></audio>
+        <audio id="jingles_SAX07" src="audio/jingles_SAX07.m4a" controls></audio>
+        <audio id="zap1" src="audio/zap1.m4a" controls></audio>
+        <audio id="zap2" src="audio/zap2.m4a" controls></audio>
+        <audio id="switch10" src="audio/switch10.m4a" controls></audio>
+        <audio id="switch11" src="audio/switch11.m4a" controls></audio>
+        <audio id="mouseclick1" src="audio/mouseclick1.m4a" controls></audio>
+    </div>
+    
     <!-- jQuery for animations and I just like using it over straight javascript -->
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <!-- for animating background color changes
@@ -322,8 +333,8 @@
 
                 var canPlaym4a = !!myAudio.canPlayType && "" != myAudio.canPlayType('audio/mpeg');
                 var canPlayOgg = !!myAudio.canPlayType && "" != myAudio.canPlayType('audio/ogg; codecs="vorbis"');
-                /*if (canPlaym4a || canPlayOgg) {
-                    audioLibrary = {
+                if (canPlaym4a || canPlayOgg) {
+                    /*audioLibrary = {
                         'timesUp' : new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] }),
                         'levelUp' : new Howl({ urls: ['audio/powerUp2.ogg', 'audio/powerUp2.m4a'] }),
                         'gameover' : new Howl({ urls: ['audio/jingles_SAX07.ogg', 'audio/jingles_SAX07.m4a'] }),
@@ -332,8 +343,58 @@
                         'selectCell' : new Howl({ urls: ['audio/switch10.ogg', 'audio/switch10.m4a'] }),
                         'unselectCell' : new Howl({ urls: ['audio/switch11.ogg', 'audio/switch11.m4a'] }),
                         'buttonClick' : new Howl({ urls: ['audio/mouseclick1.ogg', 'audio/mouseclick1.m4a'] })
+                    };*/
+                    audioLibrary = {
+                        'timesUp' : {
+                            play : function() {
+                                var myAudio = document.getElementById("zap2");
+                                myAudio.play();
+                            }
+                        },
+                        'levelUp' : {
+                            play : function() {
+                                var myAudio = document.getElementById("powerUp2");
+                                myAudio.play();
+                            }
+                        },
+                        'gameover' : {
+                            play : function() {
+                                var myAudio = document.getElementById("jingles_SAX07");
+                                myAudio.play();
+                            }
+                        },
+                        'match' : {
+                            play : function() {
+                                var myAudio = document.getElementById("zap1");
+                                myAudio.play();
+                            }
+                        },
+                        'mismatch' : {
+                            play : function() {
+                                var myAudio = document.getElementById("zap2");
+                                myAudio.play();
+                            }
+                        },
+                        'selectCell' : {
+                            play : function() {
+                                var myAudio = document.getElementById("switch10");
+                                myAudio.play();
+                            }
+                        },
+                        'unselectCell' : {
+                            play : function() {
+                                var myAudio = document.getElementById("switch11");
+                                myAudio.play();
+                            }
+                        },
+                        'buttonClick' : {
+                            play : function() {
+                                var myAudio = document.getElementById("mouseclick1");
+                                myAudio.play();
+                            }
+                        }
                     };
-                }*/
+                }
             }
             
             
@@ -708,9 +769,9 @@
                     if (addLetterSet()) {
                         // If you want to reset the comboCount when they run out of time, too.
                         // resetComboCounter();
-                        // audioLibrary['timesUp'].play();
-                        var soundEffect = new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] });
-                        soundEffect.play();
+                        audioLibrary['timesUp'].play();
+                        //var soundEffect = new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] });
+                        // soundEffect.play();
                         updateGameTimer(timetotal);
                     } else {
                         console.log('gameover');
@@ -840,17 +901,17 @@
                         setSize = newSetSize;
                         setSetSize();
                     }
-                    // audioLibrary['levelUp'].play();
-                    var soundEffect = new Howl({ urls: ['audio/powerUp2.ogg', 'audio/powerUp2.m4a'] });
-                    soundEffect.play();
+                    audioLibrary['levelUp'].play();
+                    //var soundEffect = new Howl({ urls: ['audio/powerUp2.ogg', 'audio/powerUp2.m4a'] });
+                    // soundEffect.play();
                 }
             }
             
             var gameover = function() {
                 stopGameTimer();
-                // audioLibrary['gameover'].play();
-                var soundEffect = new Howl({ urls: ['audio/jingles_SAX07.ogg', 'audio/jingles_SAX07.m4a'] });
-                soundEffect.play();
+                audioLibrary['gameover'].play();
+                //var soundEffect = new Howl({ urls: ['audio/jingles_SAX07.ogg', 'audio/jingles_SAX07.m4a'] });
+                // soundEffect.play();
                 $('#gameover > input[name="username"]').val(username);
                 $('#submit-score-button').css({
                     'visibility' : 'visible'
@@ -868,9 +929,9 @@
              */
             return  {
                 selectCell: function(cellId) {
-                    // audioLibrary['selectCell'].play();
-                    var soundEffect = new Howl({ urls: ['audio/switch10.ogg', 'audio/switch10.m4a'] });
-                    soundEffect.play();
+                    audioLibrary['selectCell'].play();
+                    //var soundEffect = new Howl({ urls: ['audio/switch10.ogg', 'audio/switch10.m4a'] });
+                    // soundEffect.play();
                     $('#' + cellId).removeClass('active');
                     $('#' + cellId).addClass('selected');
                     selectedCells.push(cellId);
@@ -891,9 +952,9 @@
                             // I'm just adding bonus time to make it harder.
                             // To replicate this, you can just set bonustime = totaltime
                             updateGameTimer(bonustime);
-                            // audioLibrary['match'].play();
-                            var soundEffect = new Howl({ urls: ['audio/zap1.ogg', 'audio/zap1.m4a'] });
-                            soundEffect.play();
+                            audioLibrary['match'].play();
+                            //var soundEffect = new Howl({ urls: ['audio/zap1.ogg', 'audio/zap1.m4a'] });
+                            // soundEffect.play();
                         } else {
                             console.log('noMatch();');
                             resetComboCounter();
@@ -904,18 +965,18 @@
                             // original game would doc time when you get it wrong.
                             // we won't be doing that
                             updateGameTimer(penaltytime);
-                            // audioLibrary['mismatch'].play();
-                            var soundEffect = new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] });
-                            soundEffect.play();
+                            audioLibrary['mismatch'].play();
+                            //var soundEffect = new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] });
+                            // soundEffect.play();
                         }
 
                         console.log('filledCells post clear = ' + filledCells);
                     }
                 },
                 unselectCell: function(cellId) {
-                    // audioLibrary['unselectCell'].play();
-                    var soundEffect = new Howl({ urls: ['audio/switch11.ogg', 'audio/switch11.m4a'] });
-                    soundEffect.play();
+                    audioLibrary['unselectCell'].play();
+                    //var soundEffect = new Howl({ urls: ['audio/switch11.ogg', 'audio/switch11.m4a'] });
+                    // soundEffect.play();
                     $('#' + cellId).removeClass('selected');
                     $('#' + cellId).addClass('active');
                     // How to delete a node in javascript:
@@ -1085,9 +1146,9 @@
                     });
                 },
                 buttonClick: function() {
-                    // audioLibrary['buttonClick'].play();
-                    var soundEffect = new Howl({ urls: ['audio/mouseclick1.ogg', 'audio/mouseclick1.m4a'] });
-                    soundEffect.play();
+                    audioLibrary['buttonClick'].play();
+                    //var soundEffect = new Howl({ urls: ['audio/mouseclick1.ogg', 'audio/mouseclick1.m4a'] });
+                    // soundEffect.play();
                 }
             };
         }(); // the parens here cause the anonymous function to execute and return
