@@ -128,6 +128,30 @@
             There is a good chance that currying would be a very neat way of handling the various gameMode specific code/functions.
             But that will be something I do in the far future as refactoring.
                 https://medium.com/@kbrainwave/currying-in-javascript-ce6da2d324fe
+            -----    
+            Performance Issues
+            Speeding up jQuery animate:
+              http://stackoverflow.com/questions/17579649/sluggish-animations-with-css3-and-jquery-for-ios
+              You can try this css hack but it doesn't do much for me:
+                http://stackoverflow.com/questions/4809000/what-is-causing-the-lag-in-html5-web-app-on-a-mobile-device-ex-iphone
+                http://chrissilich.com/blog/fix-css-animation-slow-or-choppy-in-mobile-browsers/
+                http://playground.benbarnett.net/jquery-animate-enhanced/
+              You have two choices in javascript: gsap and velocity.js
+              And one choice using CSS: zepto
+              Their approaches are different and have different feature sets.
+              gsap is more full featured and is more accurate on timing (drawback, can lag with upfront processing)
+              velocity is slimmer but less accurate on timing (does incremental processing)
+                http://greensock.com/forums/topic/9449-new-velocityjs-animation-library-features-gsap/
+                http://davidwalsh.name/css-js-animation
+              For detail on velocity.js
+                http://css-tricks.com/improving-ui-animation-workflow-velocity-js/
+                http://julian.com/research/velocity/
+                http://www.smashingmagazine.com/2014/06/18/faster-ui-animations-with-velocity-js/
+              For detail on gsap
+                http://css-tricks.com/myth-busting-css-animations-vs-javascript/
+                http://greensock.com/jquery-gsap-plugin
+              Conclusion:
+                TBD
             -----
             Styling notes:
                 redefine everything in % or vmin/vmax, like fonts and tables
@@ -229,17 +253,14 @@
     <!-- Implementing gsap for speed.
          http://greensock.com/jquery-gsap-plugin
     -->
-    <!--
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.13.2/TweenLite.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.13.2/easing/EasePack.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.13.2/utils/jquery.gsap.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.13.2/plugins/CSSPlugin.min.js"></script>
-    -->
+    <script src="js/TweenLite.min.js"></script>
+    <script src="js/EasePack.min.js"></script>
+    <script src="js/CSSPlugin.min.js"></script>
     <!-- Implementing velocity.js for speed.
          http://julian.com/research/velocity/
          http://css-tricks.com/improving-ui-animation-workflow-velocity-js/
     -->
-    <script type='application/javascript' src='js/velocity.min.js'></script>
+    <!-- <script type='application/javascript' src='js/velocity.min.js'></script> -->
 
     
     <script>       
@@ -267,6 +288,7 @@
             var timetotal = 7;
             var bonustime = timetotal;
             var penaltytime = 0;
+            var tweenProgressBar = null;
             
             // This is the current progress bar animation timeout.
             var timeout = null;
@@ -724,7 +746,29 @@
             // No need to stop since this was the animation that should finished.
             var startGameTimer = function() {
                 var progressBarWidth = timeleft * $('#progressBar').width() / timetotal;
-                $('#progressBar').find('div').animate({ width: progressBarWidth }, 0, 'linear');
+                if (tweenProgressBar !== null) {
+                    tweenProgressBar.kill();
+                }
+                TweenLite.set($('#progressBar').find('div'), { width: progressBarWidth });
+                tweenProgressBar = TweenLite.to($('#progressBar').find('div'), timeleft, {
+                    width: '0',
+                    ease: Linear.easeNone,
+                    onComplete : function(){
+                        if (addLetterSet()) {
+                            // If you want to reset the comboCount when they run out of time, too.
+                            // resetComboCounter();
+                            audioLibrary['timesUp'].play();
+                            // var soundEffect = new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] });
+                            // soundEffect.play();
+                            updateGameTimer(timetotal);
+                        } else {
+                            // console.log('gameover');
+                            stopGameTimer();
+                            gameover();
+                        }
+                    }
+                });
+                /*$('#progressBar').find('div').animate({ width: progressBarWidth }, 0, 'linear');
                 $('#progressBar').find('div').animate({ width: 0 }, timeleft * 1000, 'linear', function(){
                     if (addLetterSet()) {
                         // If you want to reset the comboCount when they run out of time, too.
@@ -738,12 +782,15 @@
                         stopGameTimer();
                         gameover();
                     }
-                });
+                });*/
             }
             
             // http://api.jquery.com/stop/
             var stopGameTimer = function() {
-                $('#progressBar').find('div').stop(true, false);
+                //$('#progressBar').find('div').stop(true, false);
+                if (tweenProgressBar !== null) {
+                    tweenProgressBar.kill();
+                }
             }
             
             var updateGameTimer = function(additionalTime) {
