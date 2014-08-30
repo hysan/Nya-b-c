@@ -180,7 +180,7 @@
     </div>
     <!-- Home Screen -->
     <div id="homescreen" class="game-container">
-        <h1 id="version">revision: 70</h1>
+        <h1 id="version">revision: 72</h1>
         <h1 id="title"><img src="img/Nya~b~c.png" alt="Nya~b~c"></h1>
         <button id="new-game-button">New Game</button>
         <button id="scoreboard-button">Highscores</button>
@@ -328,7 +328,7 @@
                     
                     if (canPlaym4a || canPlayOgg) {
                         // console.log('Enabling sound effects.');
-                        alert("Enabling sound effects.");
+                        $('#version').text('Enabled sound effects.');
                         audioLibrary = {
                             'timesUp' : new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] }),
                             'levelUp' : new Howl({ urls: ['audio/powerUp2.ogg', 'audio/powerUp2.m4a'] }),
