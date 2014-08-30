@@ -327,7 +327,8 @@
                     var canPlayOgg = !!myAudio.canPlayType && "" != myAudio.canPlayType('audio/ogg; codecs="vorbis"');
                     
                     if (canPlaym4a || canPlayOgg) {
-                        console.log('Enabling sound effects.');
+                        // console.log('Enabling sound effects.');
+                        alert("Enabling sound effects.");
                         audioLibrary = {
                             'timesUp' : new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] }),
                             'levelUp' : new Howl({ urls: ['audio/powerUp2.ogg', 'audio/powerUp2.m4a'] }),
@@ -372,10 +373,10 @@
             }
             
             var printGameData = function() {
-                console.log('username = ' + username);
-                console.log('gameMode = ' + gameMode);
+                // console.log('username = ' + username);
+                // console.log('gameMode = ' + gameMode);
                 for (var i = 0; i < 10; i++) {
-                    console.log((i + 1) + '. ' + topTen[i].username + ' ~~~ ' + topTen[i].score);
+                    // console.log((i + 1) + '. ' + topTen[i].username + ' ~~~ ' + topTen[i].score);
                 }
             }
             
@@ -499,7 +500,7 @@
              *   want the user to have.
              */
             var setGameToDifficulty = function() {
-                console.log('Setting game difficulty to: ' + gameMode);
+                // console.log('Setting game difficulty to: ' + gameMode);
                 if (gameMode == NORMAL) {
                     difficulty = 5;
                     setSize = 2;
@@ -587,7 +588,7 @@
              * 
              */
             var addLetterSet = function() {
-                console.log('filledCells = ' + filledCells);
+                // console.log('filledCells = ' + filledCells);
                 if (filledCells + setSize > difficulty * difficulty) {
                     return false;
                 }
@@ -600,16 +601,16 @@
                     var x, y;
                     x = getRandomInt(0, difficulty - 1);
                     y = getRandomInt(0, difficulty - 1);
-                    console.log('(' + x + ', ' + y + ')');
+                    // console.log('(' + x + ', ' + y + ')');
                     if (!$( '#cell-' + x + '-' + y ).hasClass('active') && !$( '#cell-' + x + '-' + y ).hasClass('selected')) {
-                        console.log("Open cell!");
+                        // console.log("Open cell!");
                         $( '#cell-' + x + '-' + y ).text(String.fromCharCode(letter + generated));
                         $( '#cell-' + x + '-' + y ).addClass('active');
                         generated++;
                         filledCells++;
                     }
                 }
-                console.log('filledCells post generating = ' + filledCells);
+                // console.log('filledCells post generating = ' + filledCells);
                 return true;
             }
             
@@ -625,9 +626,9 @@
                     var x, y;
                     x = getRandomInt(0, difficulty - 1);
                     y = getRandomInt(0, difficulty - 1);
-                    console.log('(' + x + ', ' + y + ')');
+                    // console.log('(' + x + ', ' + y + ')');
                     if (!$( '#cell-' + x + '-' + y ).hasClass('active') && !$( '#cell-' + x + '-' + y ).hasClass('selected')) {
-                        console.log("Open cell!");
+                        // console.log("Open cell!");
                         $( '#cell-' + x + '-' + y ).text(String.fromCharCode(letter + generated));
                         $( '#cell-' + x + '-' + y ).addClass('active');
                         generated++;
@@ -656,7 +657,7 @@
                 // http://stackoverflow.com/questions/1564818/how-to-break-2-loops-in-javascript
                 var chain = 0;
                 for (chain; chain < selectedCells.length - 1; chain++) {
-                    console.log($( '#' + selectedCells[chain] ).text().charCodeAt(0));
+                    // console.log($( '#' + selectedCells[chain] ).text().charCodeAt(0));
                     if ($( '#' + selectedCells[chain+1] ).text().charCodeAt(0) - $( '#' + selectedCells[chain] ).text().charCodeAt(0) != 1) {
                         return chain + 1; // break is the cheesy way to get out of the loop
                     }
@@ -718,7 +719,7 @@
                         // soundEffect.play();
                         updateGameTimer(timetotal);
                     } else {
-                        console.log('gameover');
+                        // console.log('gameover');
                         stopGameTimer();
                         gameover();
                     }
@@ -746,7 +747,7 @@
                 // In the case the game just started,
                 // timeleft would have been initialized to timetotal.
                 timeleft = Math.min(timeleft, timetotal);
-                console.log("updateTimeLeft, timetotal = " + timetotal + " timeleft = " + timeleft);
+                // console.log("updateTimeLeft, timetotal = " + timetotal + " timeleft = " + timeleft);
             }
             
             var setSetSize = function() {
@@ -883,10 +884,10 @@
                     selectedCount++;
                     if (selectedCount == setSize) {
                         var chain = currentChainLength();
-                        console.log('chain = ' + chain);
+                        // console.log('chain = ' + chain);
                         
                         if (chain == setSize) {
-                            console.log('score!');
+                            // console.log('score!');
                             emptySelectedCells();
                             upComboCounter();
                             updateScoreBy(calculatePoints(chain));
@@ -900,7 +901,7 @@
                             // var soundEffect = new Howl({ urls: ['audio/zap1.ogg', 'audio/zap1.m4a'] });
                             // soundEffect.play();
                         } else {
-                            console.log('noMatch();');
+                            // console.log('noMatch();');
                             resetComboCounter();
                             updateScoreBy(calculatePoints(chain));
                             // Cannot level up on a miss.
@@ -914,7 +915,7 @@
                             // soundEffect.play();
                         }
 
-                        console.log('filledCells post clear = ' + filledCells);
+                        // console.log('filledCells post clear = ' + filledCells);
                     }
                 },
                 unselectCell: function(cellId) {
@@ -965,17 +966,17 @@
                 loadSaveData: function() {
                     canSave = supports_html5_storage();
                     if (canSave) {
-                        console.log('Local Storage is supported. Attempting to retrieve data...');
+                        // console.log('Local Storage is supported. Attempting to retrieve data...');
                         username = localStorage[gameDomain + 'username'] ? localStorage[gameDomain + 'username'] : username;
                         gameMode = localStorage[gameDomain + 'gameMode'] ? localStorage[gameDomain + 'gameMode'] : gameMode;
                         for (var i = 0; i < 10; i++) {
                             topTen[i].username = localStorage[gameDomain + 'username.' + i] ? localStorage[gameDomain + 'username.' + i] : topTen[i].username;
                             topTen[i].score = localStorage[gameDomain + 'score.' + i] ? localStorage[gameDomain + 'score.' + i] : topTen[i].score;
                         }
-                        console.log('Data loaded and/or defaults set:');
+                        // console.log('Data loaded and/or defaults set:');
                     } else {
-                        console.log('No Local Storage support. No game data will be saved.');
-                        console.log('Defaults are being used:');
+                        // console.log('No Local Storage support. No game data will be saved.');
+                        // console.log('Defaults are being used:');
                     }
                     printGameData();
                 },
@@ -1047,7 +1048,7 @@
                     } else if (gameMode == HARD) {
                         $('#hard-setting').addClass('selected');
                     } else {
-                        console.log('Something is wrong with the difficulty settings.');
+                        // console.log('Something is wrong with the difficulty settings.');
                         gameMode = EASY;
                         $('#easy-setting').addClass('selected');
                     }
@@ -1066,7 +1067,7 @@
                     });
                 },
                 saveSettings: function() {
-                    console.log('Saving settings...');
+                    // console.log('Saving settings...');
                     username = $('#settings > input[name="username"]').val();
                     var selectedDifficulty = $('#settings').find('button.selected').attr("id");
                     if (selectedDifficulty == 'easy-setting') {
@@ -1078,12 +1079,12 @@
                     } else {
                         console.error('ERROR: Something wrong with the ids on the settings screen.');
                     }
-                    console.log('username set to ' + username);
-                    console.log('gameMode set to ' + gameMode);
+                    // console.log('username set to ' + username);
+                    // console.log('gameMode set to ' + gameMode);
                 },
                 saveScore: function() {
                     username = $('#gameover > input[name="username"]').val();
-                    console.log('saving score: | ' + username + ' | ' + currentScore + ' |');
+                    // console.log('saving score: | ' + username + ' | ' + currentScore + ' |');
                     topTen.push({
                         'username': username,
                         'score': currentScore
@@ -1139,7 +1140,7 @@
         });
         
         $("#submit-score-button").click(function(event) {
-            console.log("testing");
+            // console.log("testing");
             $('#submit-score-button').css({
                 'visibility' : 'hidden'
             });
@@ -1187,11 +1188,11 @@
             var vh = (viewport().height/100);
             var vw = (viewport().width/100);
             
-            console.log('vw = ' + (viewport().width/100));
-            console.log('vh = ' + (viewport().height/100));
-            console.log('vmin = ' + Math.min((viewport().height/100), (viewport().width/100)));
-            console.log('width = '+ viewport().width);
-            console.log('estimated game width = ' + vh * 66.67);
+            // console.log('vw = ' + (viewport().width/100));
+            // console.log('vh = ' + (viewport().height/100));
+            // console.log('vmin = ' + Math.min((viewport().height/100), (viewport().width/100)));
+            // console.log('width = '+ viewport().width);
+            // console.log('estimated game width = ' + vh * 66.67);
             //currently fixed to a 3:2 aspect ratio
             // TODO: change this based on media queries.
             var vcalc = Math.min(vh, viewport().width/66.67);
