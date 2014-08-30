@@ -151,7 +151,15 @@
                 http://css-tricks.com/myth-busting-css-animations-vs-javascript/
                 http://greensock.com/jquery-gsap-plugin
               Conclusion:
-                TBD
+                Despite testing the following conditions:
+                    - enhancing jQuery with velocity.js
+                    - enhancing jQuery with gsap
+                    - pure gsap
+                I saw no visible improvement in performance.
+                Pure velocity.js proved to be very hard to implement.
+                For now, I'm using pure gsap for the progress bar as it gives me
+                the possible hope that it improves performance on other people's
+                devices. Sadly, for my iPhone 4 (iOS 7), this doesn't help.
             -----
             Styling notes:
                 redefine everything in % or vmin/vmax, like fonts and tables
@@ -204,7 +212,7 @@
     </div>
     <!-- Home Screen -->
     <div id="homescreen" class="game-container">
-        <h1 id="version">revision: 74</h1>
+        <!-- <h1 id="version">revision: 78</h1> -->
         <h1 id="title"><img src="img/Nya~b~c.png" alt="Nya~b~c"></h1>
         <button id="new-game-button">New Game</button>
         <button id="scoreboard-button">Highscores</button>
@@ -751,8 +759,8 @@
                 }
                 TweenLite.set($('#progressBar').find('div'), { width: progressBarWidth });
                 tweenProgressBar = TweenLite.to($('#progressBar').find('div'), timeleft, {
-                    width: '0',
-                    ease: Linear.easeNone,
+                    width : '0',
+                    ease : Linear.easeNone,
                     onComplete : function(){
                         if (addLetterSet()) {
                             // If you want to reset the comboCount when they run out of time, too.
