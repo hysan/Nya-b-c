@@ -439,6 +439,7 @@ button.difficulty-button.selected {
     background-color: #E79676;
     box-sizing: border-box;
     max-width: 100%;
+    -webkit-transform: translateZ(0); /* http://chrissilich.com/blog/fix-css-animation-slow-or-choppy-in-mobile-browsers/ */
 }
 #gameover {
     height: 95%;
