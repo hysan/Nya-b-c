@@ -584,3 +584,10 @@ button.homescreen-button {
     left:0;right:0; /* horizontal center */
     background: #38814F;
 }
+#version {
+    z-index: 20;
+    font-size: 3rem;
+    position: absolute;
+    top: 0;
+    left: 1rem;
+}
