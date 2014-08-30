@@ -377,7 +377,7 @@
             };
             // Due to performance reasons, I'm disabling sound effects on mobile devices.
             // http://stackoverflow.com/questions/3514784/what-is-the-best-way-to-detect-a-handheld-device-in-jquery
-            if( !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            // if( !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
                 // Need to check the canPlayType first or an exception
                 // will be thrown for those browsers that don't support it
                 var myAudio = document.createElement('audio');
@@ -401,7 +401,7 @@
                             'buttonClick' : new Howl({ urls: ['audio/mouseclick1.ogg', 'audio/mouseclick1.m4a'] })
                         };
                     }
-                }
+                // }
             }
             
             /**
@@ -818,6 +818,7 @@
             }
             
             var updateGameTimer = function(additionalTime) {
+                if (additionalTime == 0) return;
                 updateTimeLeft(additionalTime);
                 // stopGameTimer();
                 startGameTimer();
