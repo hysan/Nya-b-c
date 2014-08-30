@@ -79,11 +79,6 @@ button, table, td, tr, h1, h2, h3, h4, h5, h6, label, div, img, th, ol, li {
     background: #E0E0E0;
     visibility: hidden;
 }
-#preloads {
-    z-index: 6; /* integer */
-    background: #E0E0E0;
-    visibility: hidden;
-}
 
 /*******************************************************************************
  * All styling code.

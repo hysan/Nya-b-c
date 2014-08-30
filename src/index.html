@@ -208,16 +208,6 @@
         <button id="save-settings-button" class="control-button">Save</button>
         <button class="control-button homescreen-button">Close</button>
     </div>
-    <!-- Hidden Screen -->
-    <div id="preloads" class="game-container">
-        <audio id="powerUp2" src="audio/powerUp2.m4a" controls></audio>
-        <audio id="jingles_SAX07" src="audio/jingles_SAX07.m4a" controls></audio>
-        <audio id="zap1" src="audio/zap1.m4a" controls></audio>
-        <audio id="zap2" src="audio/zap2.m4a" controls></audio>
-        <audio id="switch10" src="audio/switch10.m4a" controls></audio>
-        <audio id="switch11" src="audio/switch11.m4a" controls></audio>
-        <audio id="mouseclick1" src="audio/mouseclick1.m4a" controls></audio>
-    </div>
     
     <!-- jQuery for animations and I just like using it over straight javascript -->
     <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -299,25 +289,20 @@
             // http://stackoverflow.com/questions/4083537/play-sounds-on-mobile-safari
             // http://html5doctor.com/native-audio-in-the-browser/
             // Use this if we can't play sounds.
-            var dummyAudio = function() {
-                return {
-                    play : function() {
-                        return;
-                    },
-                    pause : function() {
-                        return;
-                    },
-                    canPlayType : function() {
-                        return false;
-                    },
-                    buffered : function() {
-                        return;
-                    }
-                };
-            }
-            // Need to check the canPlayType first or an exception
-            // will be thrown for those browsers that don't support it
-            var myAudio = document.createElement('audio');
+            var dummyAudio = {
+                play : function() {
+                    return;
+                },
+                pause : function() {
+                    return;
+                },
+                canPlayType : function() {
+                    return false;
+                },
+                buffered : function() {
+                    return;
+                }
+            };
             var audioLibrary = {
                 'timesUp' : dummyAudio,
                 'levelUp' : dummyAudio,
@@ -328,75 +313,33 @@
                 'unselectCell' : dummyAudio,
                 'buttonClick' : dummyAudio
             };
-            if (myAudio.canPlayType) {
-                // Currently canPlayType(type) returns: "", "maybe" or "probably" 
+            // Due to performance reasons, I'm disabling sound effects on mobile devices.
+            // http://stackoverflow.com/questions/3514784/what-is-the-best-way-to-detect-a-handheld-device-in-jquery
+            if( !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+                // Need to check the canPlayType first or an exception
+                // will be thrown for those browsers that don't support it
+                var myAudio = document.createElement('audio');
+                if (myAudio.canPlayType) {
+                    // Currently canPlayType(type) returns: "", "maybe" or "probably" 
 
-                var canPlaym4a = !!myAudio.canPlayType && "" != myAudio.canPlayType('audio/mpeg');
-                var canPlayOgg = !!myAudio.canPlayType && "" != myAudio.canPlayType('audio/ogg; codecs="vorbis"');
-                if (canPlaym4a || canPlayOgg) {
-                    /*audioLibrary = {
-                        'timesUp' : new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] }),
-                        'levelUp' : new Howl({ urls: ['audio/powerUp2.ogg', 'audio/powerUp2.m4a'] }),
-                        'gameover' : new Howl({ urls: ['audio/jingles_SAX07.ogg', 'audio/jingles_SAX07.m4a'] }),
-                        'match' : new Howl({ urls: ['audio/zap1.ogg', 'audio/zap1.m4a'] }),
-                        'mismatch' : new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] }),
-                        'selectCell' : new Howl({ urls: ['audio/switch10.ogg', 'audio/switch10.m4a'] }),
-                        'unselectCell' : new Howl({ urls: ['audio/switch11.ogg', 'audio/switch11.m4a'] }),
-                        'buttonClick' : new Howl({ urls: ['audio/mouseclick1.ogg', 'audio/mouseclick1.m4a'] })
-                    };*/
-                    audioLibrary = {
-                        'timesUp' : {
-                            play : function() {
-                                var myAudio = document.getElementById("zap2");
-                                myAudio.play();
-                            }
-                        },
-                        'levelUp' : {
-                            play : function() {
-                                var myAudio = document.getElementById("powerUp2");
-                                myAudio.play();
-                            }
-                        },
-                        'gameover' : {
-                            play : function() {
-                                var myAudio = document.getElementById("jingles_SAX07");
-                                myAudio.play();
-                            }
-                        },
-                        'match' : {
-                            play : function() {
-                                var myAudio = document.getElementById("zap1");
-                                myAudio.play();
-                            }
-                        },
-                        'mismatch' : {
-                            play : function() {
-                                var myAudio = document.getElementById("zap2");
-                                myAudio.play();
-                            }
-                        },
-                        'selectCell' : {
-                            play : function() {
-                                var myAudio = document.getElementById("switch10");
-                                myAudio.play();
-                            }
-                        },
-                        'unselectCell' : {
-                            play : function() {
-                                var myAudio = document.getElementById("switch11");
-                                myAudio.play();
-                            }
-                        },
-                        'buttonClick' : {
-                            play : function() {
-                                var myAudio = document.getElementById("mouseclick1");
-                                myAudio.play();
-                            }
-                        }
-                    };
+                    var canPlaym4a = !!myAudio.canPlayType && "" != myAudio.canPlayType('audio/mpeg');
+                    var canPlayOgg = !!myAudio.canPlayType && "" != myAudio.canPlayType('audio/ogg; codecs="vorbis"');
+                    
+                    if (canPlaym4a || canPlayOgg) {
+                        console.log('Enabling sound effects.');
+                        audioLibrary = {
+                            'timesUp' : new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] }),
+                            'levelUp' : new Howl({ urls: ['audio/powerUp2.ogg', 'audio/powerUp2.m4a'] }),
+                            'gameover' : new Howl({ urls: ['audio/jingles_SAX07.ogg', 'audio/jingles_SAX07.m4a'] }),
+                            'match' : new Howl({ urls: ['audio/zap1.ogg', 'audio/zap1.m4a'] }),
+                            'mismatch' : new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] }),
+                            'selectCell' : new Howl({ urls: ['audio/switch10.ogg', 'audio/switch10.m4a'] }),
+                            'unselectCell' : new Howl({ urls: ['audio/switch11.ogg', 'audio/switch11.m4a'] }),
+                            'buttonClick' : new Howl({ urls: ['audio/mouseclick1.ogg', 'audio/mouseclick1.m4a'] })
+                        };
+                    }
                 }
             }
-            
             
             /**
              * Private game functions.
@@ -770,7 +713,7 @@
                         // If you want to reset the comboCount when they run out of time, too.
                         // resetComboCounter();
                         audioLibrary['timesUp'].play();
-                        //var soundEffect = new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] });
+                        // var soundEffect = new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] });
                         // soundEffect.play();
                         updateGameTimer(timetotal);
                     } else {
@@ -902,7 +845,7 @@
                         setSetSize();
                     }
                     audioLibrary['levelUp'].play();
-                    //var soundEffect = new Howl({ urls: ['audio/powerUp2.ogg', 'audio/powerUp2.m4a'] });
+                    // var soundEffect = new Howl({ urls: ['audio/powerUp2.ogg', 'audio/powerUp2.m4a'] });
                     // soundEffect.play();
                 }
             }
@@ -910,7 +853,7 @@
             var gameover = function() {
                 stopGameTimer();
                 audioLibrary['gameover'].play();
-                //var soundEffect = new Howl({ urls: ['audio/jingles_SAX07.ogg', 'audio/jingles_SAX07.m4a'] });
+                // var soundEffect = new Howl({ urls: ['audio/jingles_SAX07.ogg', 'audio/jingles_SAX07.m4a'] });
                 // soundEffect.play();
                 $('#gameover > input[name="username"]').val(username);
                 $('#submit-score-button').css({
@@ -930,7 +873,7 @@
             return  {
                 selectCell: function(cellId) {
                     audioLibrary['selectCell'].play();
-                    //var soundEffect = new Howl({ urls: ['audio/switch10.ogg', 'audio/switch10.m4a'] });
+                    // var soundEffect = new Howl({ urls: ['audio/switch10.ogg', 'audio/switch10.m4a'] });
                     // soundEffect.play();
                     $('#' + cellId).removeClass('active');
                     $('#' + cellId).addClass('selected');
@@ -953,7 +896,7 @@
                             // To replicate this, you can just set bonustime = totaltime
                             updateGameTimer(bonustime);
                             audioLibrary['match'].play();
-                            //var soundEffect = new Howl({ urls: ['audio/zap1.ogg', 'audio/zap1.m4a'] });
+                            // var soundEffect = new Howl({ urls: ['audio/zap1.ogg', 'audio/zap1.m4a'] });
                             // soundEffect.play();
                         } else {
                             console.log('noMatch();');
@@ -966,7 +909,7 @@
                             // we won't be doing that
                             updateGameTimer(penaltytime);
                             audioLibrary['mismatch'].play();
-                            //var soundEffect = new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] });
+                            // var soundEffect = new Howl({ urls: ['audio/zap2.ogg', 'audio/zap2.m4a'] });
                             // soundEffect.play();
                         }
 
@@ -975,7 +918,7 @@
                 },
                 unselectCell: function(cellId) {
                     audioLibrary['unselectCell'].play();
-                    //var soundEffect = new Howl({ urls: ['audio/switch11.ogg', 'audio/switch11.m4a'] });
+                    // var soundEffect = new Howl({ urls: ['audio/switch11.ogg', 'audio/switch11.m4a'] });
                     // soundEffect.play();
                     $('#' + cellId).removeClass('selected');
                     $('#' + cellId).addClass('active');
@@ -1147,7 +1090,7 @@
                 },
                 buttonClick: function() {
                     audioLibrary['buttonClick'].play();
-                    //var soundEffect = new Howl({ urls: ['audio/mouseclick1.ogg', 'audio/mouseclick1.m4a'] });
+                    // var soundEffect = new Howl({ urls: ['audio/mouseclick1.ogg', 'audio/mouseclick1.m4a'] });
                     // soundEffect.play();
                 }
             };
