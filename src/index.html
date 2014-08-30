@@ -160,6 +160,18 @@
                 For now, I'm using pure gsap for the progress bar as it gives me
                 the possible hope that it improves performance on other people's
                 devices. Sadly, for my iPhone 4 (iOS 7), this doesn't help.
+            Optimizing my javascript:
+                http://stackoverflow.com/questions/6460644/in-jquery-is-selecting-by-class-or-id-faster-than-selecting-by-some-other-attri
+                http://stackoverflow.com/questions/10424975/is-it-faster-to-traverse-the-dom-from-a-cached-selector-than-to-find-an-idd-ele
+                
+                http://stackoverflow.com/questions/3968593/how-to-set-multiple-css-style-properties-in-javascript#3968772
+                http://stackoverflow.com/questions/294250/how-do-i-retrieve-an-html-elements-actual-width-and-height
+                https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement.offsetWidth
+                https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements
+                http://stackoverflow.com/questions/3968593/how-to-set-multiple-css-style-properties-in-javascript#3968772
+                http://stackoverflow.com/questions/5195303/set-css-attribute-in-javascript
+                http://www.kirupa.com/html5/setting_css_styles_using_javascript.htm
+                
             -----
             Styling notes:
                 redefine everything in % or vmin/vmax, like fonts and tables
@@ -175,7 +187,7 @@
     <div id="gamescreen" class="game-container">
         <div class="score-table">
             <div id="progressBar">
-                <div></div>
+                <div id="progress"></div>
             </div>
             <ol id="selected-letter-display">
                 <!-- filled in dynamically -->
@@ -297,6 +309,8 @@
             var bonustime = timetotal;
             var penaltytime = 0;
             var tweenProgressBar = null;
+            var progressBarContainer = document.getElementById('progressBar');
+            var progressBarBar = document.getElementById('progress');
             
             // This is the current progress bar animation timeout.
             var timeout = null;
@@ -753,12 +767,12 @@
             // In the callback closure, add new letters and reset the timer.
             // No need to stop since this was the animation that should finished.
             var startGameTimer = function() {
-                var progressBarWidth = timeleft * $('#progressBar').width() / timetotal;
+                var progressBarWidth = timeleft * progressBarContainer.offsetWidth / timetotal;
                 if (tweenProgressBar !== null) {
                     tweenProgressBar.kill();
                 }
-                TweenLite.set($('#progressBar').find('div'), { width: progressBarWidth });
-                tweenProgressBar = TweenLite.to($('#progressBar').find('div'), timeleft, {
+                TweenLite.set(progressBarBar, { width: progressBarWidth });
+                tweenProgressBar = TweenLite.to(progressBarBar, timeleft, {
                     width : '0',
                     ease : Linear.easeNone,
                     onComplete : function(){
@@ -808,7 +822,7 @@
             }
             
             var updateTimeLeft = function(additionalTime) {
-                var leftover = timetotal * ($('#progressBar').find('div').width() / $('#progressBar').width());
+                var leftover = timetotal * (progressBarBar.offsetWidth / progressBarContainer.offsetWidth);
                 // It'll be 0 if the game just started or just ended.
                 if (leftover != 0) {
                     timeleft = leftover;
@@ -1254,7 +1268,7 @@
             }
             return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
         }
-        jQuery(window).resize(function(){        
+       function remSizer() {
             var vh = (viewport().height/100);
             var vw = (viewport().width/100);
             
@@ -1266,10 +1280,19 @@
             //currently fixed to a 3:2 aspect ratio
             // TODO: change this based on media queries.
             var vcalc = Math.min(vh, viewport().width/66.67);
-            jQuery('html').css({
+            
+            /* http://stackoverflow.com/questions/4196971/how-to-get-the-html-tag-html-with-javascript-jquery
+               http://jsperf.com/get-html-element-and-inner
+               https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/fontsize
+            */
+            document.querySelector('html').style.fontSize = vcalc + 'px';
+            /*$('html').css({
                 'font-size' : vcalc + 'px'
-            });
-        });
+            });*/
+        }
+        // http://stackoverflow.com/questions/2996431/detect-when-a-window-is-resized-using-javascript
+        // http://stackoverflow.com/questions/9828831/jquery-execution-on-window-resize
+        window.onresize = remSizer;
 
         /* This enables fastclick.js */
         window.addEventListener('load', function() {
@@ -1286,9 +1309,10 @@
             event.preventDefault();
         }
         
+        // http://stackoverflow.com/questions/799981/document-ready-equivalent-without-jquery
         $(document).ready(function() {
             /* Do an initial resize to get the viewport to rem to pixel units set. */
-            $(window).resize();
+            remSizer();
             nyanGame.loadSaveData();
         });
     </script>
