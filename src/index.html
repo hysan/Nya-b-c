@@ -305,6 +305,9 @@
             var selectedCells = [];
             var comboCount = 0;
             
+            // Caching common jQuery selectors that could possibly effect game performance.
+            var tableCellElements = [];
+            
             // All of these are in seconds.
             var timeleft = 7;
             var timetotal = 7;
@@ -631,6 +634,13 @@
                 $('#game-grid').append($(grid));
                 
                 setGameGridStylesForDifficulty();
+                
+                emptyAnArray(tableCellElements);
+                for (var i = 0; i < difficulty; i++) {
+                    for (var j = 0; j < difficulty; j++) {
+                        tableCellElements.push($( '#cell-' + i + '-' + j ));
+                    }
+                }
             }
                 
             // http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
@@ -663,10 +673,12 @@
                     x = getRandomInt(0, difficulty - 1);
                     y = getRandomInt(0, difficulty - 1);
                     // console.log('(' + x + ', ' + y + ')');
-                    if (!$( '#cell-' + x + '-' + y ).hasClass('active') && !$( '#cell-' + x + '-' + y ).hasClass('selected')) {
+                    if (!tableCellElements[(difficulty * x) + y].hasClass('active') && !tableCellElements[(difficulty * x) + y].hasClass('selected')) {
+                    //if (!$( '#cell-' + x + '-' + y ).hasClass('active') && !$( '#cell-' + x + '-' + y ).hasClass('selected')) {
                         // console.log("Open cell!");
-                        $( '#cell-' + x + '-' + y ).text(String.fromCharCode(letter + generated));
-                        $( '#cell-' + x + '-' + y ).addClass('active');
+                        //$( '#cell-' + x + '-' + y ).text(String.fromCharCode(letter + generated));
+                        //$( '#cell-' + x + '-' + y ).addClass('active');
+                        tableCellElements[(difficulty * x) + y].text(String.fromCharCode(letter + generated)).addClass('active');
                         generated++;
                         filledCells++;
                     }
@@ -688,10 +700,12 @@
                     x = getRandomInt(0, difficulty - 1);
                     y = getRandomInt(0, difficulty - 1);
                     // console.log('(' + x + ', ' + y + ')');
-                    if (!$( '#cell-' + x + '-' + y ).hasClass('active') && !$( '#cell-' + x + '-' + y ).hasClass('selected')) {
+                    if (!tableCellElements[(difficulty * x) + y].hasClass('active') && !tableCellElements[(difficulty * x) + y].hasClass('selected')) {
+                    //if (!$( '#cell-' + x + '-' + y ).hasClass('active') && !$( '#cell-' + x + '-' + y ).hasClass('selected')) {
                         // console.log("Open cell!");
-                        $( '#cell-' + x + '-' + y ).text(String.fromCharCode(letter + generated));
-                        $( '#cell-' + x + '-' + y ).addClass('active');
+                        //$( '#cell-' + x + '-' + y ).text(String.fromCharCode(letter + generated));
+                        //$( '#cell-' + x + '-' + y ).addClass('active');
+                        tableCellElements[(difficulty * x) + y].text(String.fromCharCode(letter + generated)).addClass('active');
                         generated++;
                         filledCells++;
                     }
@@ -719,7 +733,10 @@
                 var chain = 0;
                 for (chain; chain < selectedCells.length - 1; chain++) {
                     // console.log($( '#' + selectedCells[chain] ).text().charCodeAt(0));
-                    if ($( '#' + selectedCells[chain+1] ).text().charCodeAt(0) - $( '#' + selectedCells[chain] ).text().charCodeAt(0) != 1) {
+                    var cellXY = selectedCells[chain].split('-');
+                    var cellXYNext = selectedCells[chain+1].split('-');
+                    //if ($( '#' + selectedCells[chain+1] ).text().charCodeAt(0) - $( '#' + selectedCells[chain] ).text().charCodeAt(0) != 1) {
+                    if (tableCellElements[(difficulty * parseInt(cellXYNext[1], 10)) + parseInt(cellXYNext[2], 10)].text().charCodeAt(0) - tableCellElements[(difficulty * parseInt(cellXY[1], 10)) + parseInt(cellXY[2], 10)].text().charCodeAt(0) != 1) {
                         return chain + 1; // break is the cheesy way to get out of the loop
                     }
                 }
@@ -735,8 +752,10 @@
             
             var emptySelectedCells = function() {
                 for (var i = 0; i < selectedCells.length; i++) {
-                    $( '#' + selectedCells[i] ).text('');
-                    $( '#' + selectedCells[i] ).removeClass('selected');
+                    //$( '#' + selectedCells[i] ).text('');
+                    //$( '#' + selectedCells[i] ).removeClass('selected');
+                    var cellXY = selectedCells[i].split('-');
+                    tableCellElements[(difficulty * parseInt(cellXY[1], 10)) + parseInt(cellXY[2], 10)].text('').removeClass('selected');
                 }
                 filledCells -= selectedCount;
                 emptyAnArray(selectedCells);
@@ -746,8 +765,10 @@
             
             var unselectSelectedCells = function() {
                 for (var i = 0; i < selectedCells.length; i++) {
-                    $( '#' + selectedCells[i] ).removeClass('selected');
-                    $( '#' + selectedCells[i] ).addClass('active');
+                    //$( '#' + selectedCells[i] ).removeClass('selected');
+                    //$( '#' + selectedCells[i] ).addClass('active');
+                    var cellXY = selectedCells[i].split('-');
+                    tableCellElements[(difficulty * parseInt(cellXY[1], 10)) + parseInt(cellXY[2], 10)].removeClass('selected').addClass('active');
                 }
                 emptyAnArray(selectedCells);
                 selectedCount = 0;
@@ -929,7 +950,7 @@
                     // This also helps us avoid the potential problem where the user 
                     // can lose after having their setSize increase.
                     if (newSetSize != setSize) {
-                        clearAllCells();
+                        //clearAllCells();
                         setSize = newSetSize;
                         setSetSize();
                     }
@@ -960,14 +981,18 @@
              * What's public.
              */
             return  {
-                selectCell: function(cellId) {
+                selectCell: function(cellElement) {
+                    var cellId = cellElement.attr('id');
+                    
                     audioLibrary['selectCell'].play();
                     // var soundEffect = new Howl({ urls: ['audio/switch10.ogg', 'audio/switch10.m4a'] });
                     // soundEffect.play();
-                    $('#' + cellId).removeClass('active');
-                    $('#' + cellId).addClass('selected');
+                    //$('#' + cellId).removeClass('active');
+                    //$('#' + cellId).addClass('selected');
+                    cellElement.removeClass('active').addClass('selected');
                     selectedCells.push(cellId);
-                    $('#selected-letter-display').append($('<li id="display-' + cellId + '">' + $('#' + cellId).text() + '</li>'));
+                    //$('#selected-letter-display').append($('<li id="display-' + cellId + '">' + $('#' + cellId).text() + '</li>'));
+                    $('#selected-letter-display').append($('<li id="display-' + cellId + '">' + cellElement.text() + '</li>'));
                     selectedCount++;
                     if (selectedCount == setSize) {
                         var chain = currentChainLength();
@@ -1005,12 +1030,15 @@
                         // console.log('filledCells post clear = ' + filledCells);
                     }
                 },
-                unselectCell: function(cellId) {
+                unselectCell: function(cellElement) {
+                    var cellId = cellElement.attr('id');
+                    
                     audioLibrary['unselectCell'].play();
                     // var soundEffect = new Howl({ urls: ['audio/switch11.ogg', 'audio/switch11.m4a'] });
                     // soundEffect.play();
-                    $('#' + cellId).removeClass('selected');
-                    $('#' + cellId).addClass('active');
+                    //$('#' + cellId).removeClass('selected');
+                    //$('#' + cellId).addClass('active');
+                    cellElement.removeClass('selected').addClass('active');
                     // How to delete a node in javascript:
                     // http://stackoverflow.com/questions/3387427/javascript-remove-element-by-id
                     var element = document.getElementById('display-' + cellId);
@@ -1245,9 +1273,9 @@
         // http://jsperf.com/comparing-hasclass-vs-selecting-in-a-selector
         $("#game-grid").on('click', 'td', function() {
             if ($(this).hasClass('active')) {
-                nyanGame.selectCell($(this).attr('id'));
+                nyanGame.selectCell($(this));
             } else if ($(this).hasClass('selected')) {
-                nyanGame.unselectCell($(this).attr('id'));
+                nyanGame.unselectCell($(this));
             }
         });
         
