@@ -13,6 +13,8 @@ html {
 /**
  * Prevent element highlighting for everything we use except input fields.
  * http://stackoverflow.com/questions/826782/css-rule-to-disable-text-selection-highlighting
+ * Specifically for Android devices with regards to click actions via jQuery:
+ * http://stackoverflow.com/questions/12263226/android-phonegap-jquery-click-on-element-in-dynamic-list
  */
 button, table, td, tr, h1, h2, h3, h4, h5, h6, label, div, img, th, ol, li {
     -webkit-touch-callout: none;
@@ -21,6 +23,7 @@ button, table, td, tr, h1, h2, h3, h4, h5, h6, label, div, img, th, ol, li {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 /*******************************************************************************
