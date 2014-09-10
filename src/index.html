@@ -307,6 +307,11 @@
             
             // Caching common jQuery selectors that could possibly effect game performance.
             var tableCellElements = [];
+            var chainElement = $('#chain');
+            var comboElement = $('#combo');
+            var scoreElement = $('#score');
+            var levelElement = $('#level');
+            var selectedLetterDisplayElement = $('#selected-letter-display');
             
             // All of these are in seconds.
             var timeleft = 7;
@@ -380,7 +385,7 @@
             };
             // Due to performance reasons, I'm disabling sound effects on mobile devices.
             // http://stackoverflow.com/questions/3514784/what-is-the-best-way-to-detect-a-handheld-device-in-jquery
-            // if( !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            if( !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
                 // Need to check the canPlayType first or an exception
                 // will be thrown for those browsers that don't support it
                 var myAudio = document.createElement('audio');
@@ -404,7 +409,7 @@
                             'buttonClick' : new Howl({ urls: ['audio/mouseclick1.ogg', 'audio/mouseclick1.m4a'] })
                         };
                     }
-                // }
+                }
             }
             
             /**
@@ -860,18 +865,18 @@
             
             var setSetSize = function() {
                 // TODO: add nice animation
-                $('#chain').text(setSize);
+                chainElement.text(setSize);
             }
             
             var upComboCounter = function() {
                 // TODO: add nice animation
                 comboCount++;
-                $('#combo').text(comboCount);
+                comboElement.text(comboCount);
             }
             
             var resetComboCounter = function() {
                 comboCount = 0;
-                $('#combo').text(comboCount);
+                comboElement.text(comboCount);
             }
             
             var calculatePoints = function(chain) {
@@ -907,7 +912,7 @@
             
             var updateScoreBy = function(points) {
                 currentScore += points;
-                $('#score').text(currentScore);
+                scoreElement.text(currentScore);
             }
             
             var calculateLevel = function() {
@@ -918,7 +923,7 @@
                 for (var i = 0; i < levels; i++) {
                     currentLevel++;
                     // TODO: make the level up into an animation
-                    $('#level').text('Level ' + currentLevel);
+                    levelElement.text('Level ' + currentLevel);
                     
                     // Now tweak game settings post leveling up based on difficulty.
                     // First, for all difficulties, the game board gets bigger every 10 levels.
@@ -992,7 +997,7 @@
                     cellElement.removeClass('active').addClass('selected');
                     selectedCells.push(cellId);
                     //$('#selected-letter-display').append($('<li id="display-' + cellId + '">' + $('#' + cellId).text() + '</li>'));
-                    $('#selected-letter-display').append($('<li id="display-' + cellId + '">' + cellElement.text() + '</li>'));
+                    selectedLetterDisplayElement.append($('<li id="display-' + cellId + '">' + cellElement.text() + '</li>'));
                     selectedCount++;
                     if (selectedCount == setSize) {
                         var chain = currentChainLength();
