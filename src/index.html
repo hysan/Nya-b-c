@@ -1240,13 +1240,15 @@
             });
         });
         
-        // http://stackoverflow.com/questions/1996747/add-new-value-to-an-existing-array-in-javascript
-        $(document.body).on('click', "td[id^='cell-'][class='active']" ,function() {
-            nyanGame.selectCell($(this).attr('id'));
-        });
-        
-        $(document.body).on('click', "td[id^='cell-'][class='selected']" ,function() {
-            nyanGame.unselectCell($(this).attr('id'));
+        // Optimizing code for event handlers. This should be the fastest (or second fastest) implementation.
+        // http://24ways.org/2011/your-jquery-now-with-less-suck/
+        // http://jsperf.com/comparing-hasclass-vs-selecting-in-a-selector
+        $("#game-grid").on('click', 'td', function() {
+            if ($(this).hasClass('active')) {
+                nyanGame.selectCell($(this).attr('id'));
+            } else if ($(this).hasClass('selected')) {
+                nyanGame.unselectCell($(this).attr('id'));
+            }
         });
         
         $("button").click(function(event) {
