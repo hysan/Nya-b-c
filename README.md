@@ -1,5 +1,25 @@
 # README
 
+This is a clone of the game [Meow Letters](https://github.com/ana-balica/meow_letters_py) but written in JavaScript using HTML5 features. It works offline and you can add it to your mobile or tablet device as a web app too! I've also made an Android APK using PhoneGap. It's optimized to run smoothly even on devices as old as iPhone 4 and an HP Touchpad running Android.
+
+## Gameplay
+
+After cloning it, I changed parts of the gameplay to include chaining, combos, better randomization, speedups, and other features making it more interesting to play. The central mechanic remains the same though: select the letters in the correct alphabetical order to clear them from the screen and gain points.
+
+## Screenshots
+
+![Menu Screen](/screenshots/menu.png?raw=true "Menu Screen")
+
+![Settings](/screenshots/settings.png?raw=true "Settings")
+
+![Scoreboard](/screenshots/scoreboard.png?raw=true "Scoreboard")
+
+![Gameplay 1](/screenshots/gameplay-1.png?raw=true "Gameplay 1")
+
+![Gameplay 2](/screenshots/gameplay-2.png?raw=true "Gameplay 2")
+
+![Game Over](/screenshots/gameover.png?raw=true "Game Over")
+
 ## Requirements
 
 - HTML5
